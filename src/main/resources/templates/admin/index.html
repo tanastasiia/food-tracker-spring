@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" ng-app="admin" ng-controller="UserCtrl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+
+
+    <script type="text/javascript" th:src="@{/js/admin/admin.js}"></script>
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+        });
+    </script>
+
+</head>
+
+<body>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/" th:text="#{messages.menu.home}"></a></li>
+        <li class="breadcrumb-item"><a href="/account" th:text="#{messages.menu.account}"></a></li>
+        <li class="breadcrumb-item"><a href="/statistics" th:text="#{messages.menu.statistics}"></a></li>
+        <li class="breadcrumb-item"><a href="/" th:href="@{/logout}" th:text="#{messages.menu.logout}"></a></li>
+
+        <li class="breadcrumb-item" th:if="${isAdmin}"><a href="/admin" th:text="#{messages.menu.admin}"></a></li>
+
+        <li class="breadcrumb-item"><a th:href="@{/admin?lang=en}">English</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/admin?lang=ua}">Українська</a></li>
+    </ol>
+
+
+
+
+    <div id="tabs" >
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item"  ng-init="getUsers()">
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#tabs-1" role="tab" aria-controls="home"
+                   aria-selected="true" th:text="#{messages.users}"></a>
+            </li>
+
+            <li class="nav-item" ng-init="getFood()">
+                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#tabs-2" role="tab" aria-controls="contact"
+                   aria-selected="false"th:text="#{messages.food}"></a>
+            </li>
+            <li class="nav-item"  ng-init="getUsersFood()">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tabs-3" role="tab" aria-controls="profile"
+                   aria-selected="false" th:text="#{messages.users.food}"></a>
+            </li>
+        </ul>
+
+
+        <div id="tabs-1">
+
+            <table class="table" ng-model="users">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col" th:text="#{messages.enter.username}"></th>
+                    <th scope="col" th:text="#{messages.enter.name}"></th>
+                    <th scope="col" th:text="#{messages.enter.name.ua}"></th>
+                    <th scope="col" th:text="#{messages.enter.height}"></th>
+                    <th scope="col" th:text="#{messages.enter.weight}"></th>
+                    <th scope="col" th:text="#{messages.enter.age}"></th>
+                    <th scope="col" th:text="#{messages.enter.activity}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr  ng-repeat="user in users">
+                    <td>{{user.username}}</td>
+                    <td>{{user.firstName}}</td>
+                    <td>{{user.firstNameUa}}</td>
+                    <td>{{user.height}}</td>
+                    <td>{{user.weight}}</td>
+                    <td>{{user.age}}</td>
+                    <td>{{user.activityLevel}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
+        <div id="tabs-2">
+
+
+
+            <table class="table" ng-model="foods">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col" th:text="#{messages.enter.food.name}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.name.ua}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.carbs}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.protein}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.fat}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.calories}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr  ng-repeat="food in foods">
+                    <td>{{food.name}}</td>
+                    <td>{{food.nameUa}}</td>
+                    <td>{{food.carbs}}</td>
+                    <td>{{food.protein}}</td>
+                    <td>{{food.fat}}</td>
+                    <td>{{food.calories}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="" aria-label="Previous" ng-click="foodPage=(foodPage>0)?foodPage-1:foodPage;getFood()">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href=""  th:text="#{messages.button.first}"
+                                             ng-click="foodPage=0;getFood()"></a></li>
+                    <li class="page-item"><a class="page-link" href="" th:text="#{messages.button.last}"
+                                             ng-click="foodPage=foodPageMax;getFood()"></a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="" aria-label="Next" ng-click="foodPage=(foodPage<foodPageMax)?foodPage+1:foodPage;getFood()">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div id="tabs-3">
+
+
+
+            <table class="table" ng-model="meals">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col" th:text="#{messages.enter.username}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.name}"></th>
+                    <th scope="col" th:text="#{messages.text.amount}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.date}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.time}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr  ng-repeat="meal in meals">
+                    <td>{{meal.username}}</td>
+                    <td>{{meal.foodName}}</td>
+                    <td>{{meal.amount}}</td>
+                    <td>{{meal.date}}</td>
+                    <td>{{meal.time}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <nav aria-label="Page navigation example" >
+                <ul class="pagination" >
+                    <li class="page-item">
+                        <a class="page-link" href="" aria-label="Previous"
+                           ng-click="usersFoodPage=(usersFoodPage>0)?usersFoodPage-1:usersFoodPage;getUsersFood()">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="" ng-click="usersFoodPage=0;getUsersFood()">first</a></li>
+                    <li class="page-item"><a class="page-link" href=""ng-click="usersFoodPage=usersFoodPageMax;getUsersFood()">last</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="" aria-label="Next"
+                           ng-click="usersFoodPage=(usersFoodPage<usersFoodPageMax)?usersFoodPage+1:usersFoodPage;getUsersFood()">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+
+        </div>
+    </div>
+
+
+
+
+</nav>
+</body>
+</html>

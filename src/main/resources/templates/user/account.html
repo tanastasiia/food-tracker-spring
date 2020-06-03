@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Account</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/user/account.js}"></script>
+</head>
+<body  ng-app="account" ng-controller="AccountCtrl">
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/" th:text="#{messages.menu.home}"></a></li>
+        <li class="breadcrumb-item"><a href="/account" th:text="#{messages.menu.account}"></a></li>
+        <li class="breadcrumb-item"><a href="/statistics" th:text="#{messages.menu.statistics}"></a></li>
+        <li class="breadcrumb-item"><a href="/" th:href="@{/logout}" th:text="#{messages.menu.logout}"></a></li>
+
+        <li class="breadcrumb-item" th:if="${isAdmin}">
+            <a href="/admin" th:text="#{messages.menu.admin}"></a>
+        </li>
+
+        <li class="breadcrumb-item"><a th:href="@{/account?lang=en}">English</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/account?lang=ua}">Українська</a></li>
+    </ol>
+</nav>
+
+
+<div class="container" style="margin-top: 60px" ng-init="getUser()">
+    <p>
+        Welcome <span th:text="${principal.getUsername()}"></span>
+    </p>
+
+    <table class="table" ng-model="user">
+        <tbody>
+        <tr>
+            <th scope="col" th:text="#{messages.enter.name}"></th>
+            <td>{{user.firstName}}</td>
+        </tr>
+        <tr>
+            <th th:text="#{messages.enter.name.ua}"></th>
+            <td>{{user.firstNameUa}}</td>
+        </tr>
+        <tr>
+            <th th:text="#{messages.enter.username}"></th>
+            <td>{{user.username}}</td>
+        </tr>
+        <tr>
+            <th th:text="#{messages.enter.height}"></th>
+            <td>{{user.height}}</td>
+        </tr>
+        <tr>
+            <th th:text="#{messages.enter.weight}"></th>
+            <td>{{user.weight}}</td>
+        </tr>
+        <tr>
+            <th th:text="#{messages.enter.age}"></th>
+            <td>{{user.age}}</td>
+        </tr>
+        <tr>
+            <th th:text="#{messages.enter.activity}"></th>
+            <td>{{user.activityLevel}}</td>
+        </tr>
+        <tr>
+            <th th:text="#{messages.enter.gender}"></th>
+            <td>{{user.gender}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!--<button class="btn btn-primary" style="margin-top:30px"
+            onclick="location.href='/account/change'" type="button"
+            th:text="#{messages.button.change}">
+    </button>-->
+
+    <button class="btn btn-primary" style="margin-top:30px"
+            onclick="location.href='/account/change/password'" type="button"
+            th:text="#{messages.button.change.password}">
+    </button>
+
+
+</div>
+</body>
+</html>
+
