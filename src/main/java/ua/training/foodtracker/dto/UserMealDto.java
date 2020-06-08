@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserMealDTO {
-    String foodName;
-    Integer amount;
+public class UserMealDto {
+    private String foodName;
+    private Integer amount;
 }

@@ -2,9 +2,14 @@ package ua.training.foodtracker.entity;
 
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 
 @Getter
 @Setter
@@ -15,7 +20,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -24,17 +29,17 @@ public class User implements Serializable {
     @Column(name = "username", nullable = false)
     private String username;
 
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "active", nullable = false)
-    private boolean active;
-
-    @Column(name = "roles")
-    private String roles;
-
-    @Column(name = "first_name")
-    private String firstName;
+    @Column(name = "role")
+    private String role;
 
     @Column(name = "height", nullable = false)
     private Integer height;
@@ -48,10 +53,49 @@ public class User implements Serializable {
     @Column(name = "age", nullable = false)
     private Integer age;
 
-    @Column(name = "first_name_ua", nullable = false)
-    private String firstNameUa;
-
     @Column(name = "gender", nullable = false)
     private String gender;
+
+
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
 }

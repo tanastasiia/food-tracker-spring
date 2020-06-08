@@ -3,16 +3,18 @@ package ua.training.foodtracker.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserTodayStatisticsDTO {
-    private Integer carbs;
-    private Integer protein;
-    private Integer fat;
+public class UserTodayStatisticsDto {
+    private BigDecimal carbs;
+    private BigDecimal protein;
+    private BigDecimal fat;
     private Integer calories;
     private Integer caloriesNorm;
 }

@@ -2,22 +2,23 @@ package ua.training.foodtracker.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ua.training.foodtracker.config.SecurityConfiguration;
+import ua.training.foodtracker.config.Utils;
 import ua.training.foodtracker.dto.*;
-import ua.training.foodtracker.entity.UserDetailsImpl;
-import ua.training.foodtracker.exception.FoodExistsException;
+import ua.training.foodtracker.dto.lists.FoodNamesDto;
+import ua.training.foodtracker.dto.lists.UsersMealStatDto;
+import ua.training.foodtracker.entity.Food;
+import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.exception.FoodNotExistsException;
 import ua.training.foodtracker.exception.PasswordIncorrectException;
 import ua.training.foodtracker.exception.UserNotExistsException;
+import ua.training.foodtracker.service.FoodInfoService;
 import ua.training.foodtracker.service.FoodService;
-import ua.training.foodtracker.service.UserFoodService;
+import ua.training.foodtracker.service.MealService;
 import ua.training.foodtracker.service.UserService;
 
 
@@ -26,75 +27,87 @@ import ua.training.foodtracker.service.UserService;
 @RequestMapping("/api/user/")
 public class UserController {
 
-    @Autowired
-    private UserFoodService userFoodService;
-    @Autowired
+    private MealService mealService;
     private FoodService foodService;
-    @Autowired
+    private FoodInfoService foodInfoService;
     private UserService userService;
-    @Autowired
-    private SecurityConfiguration securityConfiguration;
 
+    public UserController(MealService mealService, FoodService foodService, FoodInfoService foodInfoService, UserService userService) {
+        this.mealService = mealService;
+        this.foodService = foodService;
+        this.foodInfoService = foodInfoService;
+        this.userService = userService;
+    }
+
+
+    @GetMapping("user_account")
+    public UserDto userDto() throws UserNotExistsException {
+        return userService.getUserDTOByUsername( Utils.getPrincipalUsername());
+    }
     @GetMapping("user")
-    public UserDTO user() throws UserNotExistsException {
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.getUserDTOByUsername(principal.getUsername());
+    public User user() {
+        return Utils.getPrincipal();
+        //return userService.findByUsername(Utils.getPrincipalUsername()).orElseThrow(UserNotExistsException::new);
     }
 
     @GetMapping("todays_food")
-    public UsersMealStatDTO getTodaysFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
-        return userFoodService.findAllTodaysPrincipalStat(pageable);
+    public UsersMealStatDto getTodaysFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return mealService.findAllTodaysMeals(pageable, Utils.getPrincipalId());
     }
 
     @GetMapping("all_food")
-    public UsersMealStatDTO getAllFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
-        return userFoodService.findAllPrincipalStat(pageable);
+    public UsersMealStatDto getAllFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return mealService.findAllPrincipalStat(pageable, Utils.getPrincipalId());
     }
 
     @GetMapping("user_statistics")
-    public UserTodayStatisticsDTO getTodaysUserStatistics() throws UserNotExistsException {
+    public UserTodayStatisticsDto getTodaysUserStatistics(){
         log.info("usert stat");
-        return userFoodService.getTodaysPrincipalStatistics();
+        return mealService.getTodaysPrincipalStatistics(Utils.getPrincipalId());
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("add_user_food")
-    public int addUserFood(UserMealDTO userMealDTO) throws FoodNotExistsException, UserNotExistsException {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PostMapping("add_meal")
+    public int addUserFood(UserMealDto userMealDto) throws FoodNotExistsException {
 
-        foodService.findByName(userMealDTO.getFoodName()).orElseThrow(FoodNotExistsException::new);
+        log.info("Meal dto: {}",  userMealDto.getFoodName());
+        Food food = foodService.findByName(userMealDto.getFoodName()).orElseThrow(FoodNotExistsException::new);
 
-        log.info("User food added: {}", userFoodService.save(userMealDTO));
-        return userFoodService.todaysCalories();
+        log.info("Meal added: {}", mealService.save(food, userMealDto.getAmount()));
+
+        return mealService.todaysCalories();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add_food")
-    public void addFood(FoodDTO foodDTO) throws FoodExistsException {
+    public void addFood(FoodDto foodDTO){
 
-        //TODO move to controller
-        if (foodService.findByName(foodDTO.getName()).isPresent()) {
-            throw new FoodExistsException();
-        }
-        log.info("Food added: {}", foodService.save(foodDTO));
+        log.info("Food added: {}", foodInfoService.save(foodDTO, Utils.getPrincipalId()));
 
     }
 
-
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("change_password")
-    public void changePassword(PasswordChangeDTO passwordChangeDTO) throws PasswordIncorrectException {
+    public void changePassword(PasswordChangeDto passwordChangeDTO) throws PasswordIncorrectException {
 
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("PasswordChangeDTO: {}", passwordChangeDTO);
-
-        //TODO move to controller
-        if (!securityConfiguration.getPasswordEncoder()
-                .matches(passwordChangeDTO.getOldPassword(), principal.getPassword())) {
-            throw new PasswordIncorrectException();
-        }
-
-        userService.updatePassword(passwordChangeDTO.getNewPassword(), principal.getUsername());
+        userService.updatePassword(passwordChangeDTO);
         log.info("Password changed");
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("change_account")
+    public void changeAccount(User user){
+
+       userService.updateAccount(user);
+        log.info("Update account: " + user.toString());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("food_names_list")
+    public FoodNamesDto foodNamesList(){
+
+        log.info("Food names list " );
+        return foodInfoService.foodNamesList(Utils.getPrincipalId());
     }
 
 }

@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Slf4j
 @Controller
-public class GuestController {
+public class GuestPageController {
 
     @GetMapping("/login")
     public String login() {
         log.info("login page");
-        return "login.html";
+        return "login";
     }
 
     @GetMapping("/registration")

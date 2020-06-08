@@ -10,19 +10,19 @@ import ua.training.foodtracker.entity.User;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserDTO {
+public class UserDto {
 
     private String username;
     private String password;
     private String firstName;
+    private String lastName;
     private Integer height;
     private Integer weight;
     private String activityLevel;
     private Integer age;
-    private String firstNameUa;
     private String gender;
 
-    public UserDTO(User user) {
+    public UserDto(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.height = user.getHeight();
@@ -30,7 +30,7 @@ public class UserDTO {
         this.activityLevel = user.getActivityLevel();
         this.age = user.getAge();
         this.firstName = user.getFirstName();
-        this.firstNameUa = user.getFirstNameUa();
+        this.lastName = user.getLastName();
         this.gender = user.getGender();
     }
 

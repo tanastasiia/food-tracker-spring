@@ -21,21 +21,21 @@ public class Food implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "name_ua", nullable = false)
+    @Column(name = "name_ua")
     private String nameUa;
 
-    @Column(name = "carbs", nullable = false)
+    @Column(name = "carbs_mg", nullable = false)
     private Integer carbs;
 
-    @Column(name = "protein", nullable = false)
+    @Column(name = "protein_mg", nullable = false)
     private Integer protein;
 
-    @Column(name = "fat", nullable = false)
+    @Column(name = "fat_mg", nullable = false)
     private Integer fat;
 
-    @Column(name = "calories")
+    @Column(name = "calories", nullable = false)
     private Integer calories;
 }

@@ -28,19 +28,17 @@
 
 
 <div class="container" style="margin-top: 60px" ng-init="getUser()">
-    <p>
-        Welcome <span th:text="${principal.getUsername()}"></span>
-    </p>
+
 
     <table class="table" ng-model="user">
         <tbody>
         <tr>
-            <th scope="col" th:text="#{messages.enter.name}"></th>
+            <th scope="col" th:text="#{messages.enter.first.name}"></th>
             <td>{{user.firstName}}</td>
         </tr>
         <tr>
-            <th th:text="#{messages.enter.name.ua}"></th>
-            <td>{{user.firstNameUa}}</td>
+            <th th:text="#{messages.enter.last.name}"></th>
+            <td>{{user.lastName}}</td>
         </tr>
         <tr>
             <th th:text="#{messages.enter.username}"></th>
@@ -77,6 +75,10 @@
     <button class="btn btn-primary" style="margin-top:30px"
             onclick="location.href='/account/change/password'" type="button"
             th:text="#{messages.button.change.password}">
+    </button>
+    <button class="btn btn-primary" style="margin-top:30px"
+            onclick="location.href='/account/change'" type="button"
+            th:text="#{messages.button.change.account}">
     </button>
 
 

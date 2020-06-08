@@ -7,7 +7,41 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
-    <script type="text/javascript" th:src="@{/js/user/food.js}"></script>
+
+    <style>
+        .autocomplete {
+            /*the container must be positioned relative:*/
+            position: relative;
+            display: inline-block;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            /*position the autocomplete items to be the same width as the container:*/
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+        .autocomplete-items div:hover {
+            /*when hovering an item:*/
+            background-color: #e9e9e9;
+        }
+        .autocomplete-active {
+            /*when navigating through the items using the arrow keys:*/
+            background-color: DodgerBlue !important;
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
 <nav aria-label="breadcrumb">
@@ -55,8 +89,13 @@
                 </div>
             </div>
 
+
+
+
+
+            
             <form method="post" style="margin-bottom: 30px"
-                  name="form" autocomplete="off" ng-submit="addUserFood(userFood)">
+                  name="form" autocomplete="off" ng-submit="addMeal(meal)" ng-init="foodNamesList()">
 
 
                 <div th:if="${param.success}">
@@ -70,14 +109,15 @@
 
                 <div class="form-group">
                     <label th:text="#{messages.enter.food.name}" for="food-name"></label>
+                    <div class="autocomplete">
                     <input class="form-control form-control-lg" id="food-name" type="text" placeholder=""
-                           ng-model="userFood.foodName" required>
+                          required></div>
                 </div>
 
                 <div class="form-group">
                     <label th:text="#{messages.enter.food.amount}" for="food-amount"></label>
                     <input class="form-control form-control-lg" id="food-amount" type="number" placeholder=""
-                           ng-model="userFood.amount" required>
+                           required>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="margin-top:30px"
@@ -118,19 +158,19 @@
 
                 <div class="form-group">
                     <label for="carbs" th:text="#{messages.enter.food.carbs}"></label>
-                    <input class="form-control form-control-lg" id="carbs" type="number" placeholder=""
+                    <input class="form-control form-control-lg" id="carbs" type="number" step="0.1" placeholder=""
                            ng-model="food.carbs">
                 </div>
 
                 <div class="form-group">
                     <label for="protein" th:text="#{messages.enter.food.protein}"></label>
-                    <input class="form-control form-control-lg" id="protein" type="number" placeholder=""
+                    <input class="form-control form-control-lg" id="protein" type="number" step="0.1" placeholder=""
                            ng-model="food.protein">
                 </div>
 
                 <div class="form-group">
                     <label for="fat" th:text="#{messages.enter.food.fat}"></label>
-                    <input class="form-control form-control-lg" id="fat" type="number" placeholder=""
+                    <input class="form-control form-control-lg" id="fat" type="number" step="0.1" placeholder=""
                            ng-model="food.fat">
                 </div>
 
@@ -151,7 +191,7 @@
     </div>
 
 </div>
-
+<script type="text/javascript" th:src="@{/js/user/food.js}"></script>
 </body>
 </html>
 

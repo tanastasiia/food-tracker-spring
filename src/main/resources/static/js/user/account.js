@@ -7,7 +7,7 @@ angular.module("account", [])
         $scope.getUser = function () {
             $http({
                 method: "GET",
-                url: "/api/user/user",
+                url: "/api/user/user_account",
                 headers: {"Content-Type": "application/json"}
             }).then(
                 function (data) {

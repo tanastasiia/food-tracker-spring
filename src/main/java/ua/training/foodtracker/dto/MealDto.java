@@ -11,10 +11,10 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserMealStatDTO {
+public class MealDto {
+    String username;
     String foodName;
     Integer amount;
     LocalDate date;
     LocalTime time;
-
 }

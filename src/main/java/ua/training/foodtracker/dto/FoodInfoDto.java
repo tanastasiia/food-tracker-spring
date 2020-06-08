@@ -1,7 +1,7 @@
 package ua.training.foodtracker.dto;
 
+
 import lombok.*;
-import org.springframework.data.domain.PageImpl;
 
 @Getter
 @Setter
@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageImpl;
 @NoArgsConstructor
 @Builder
 @ToString
-public class MealsDTO {
-    private PageImpl<MealDTO> meals;
+public class FoodInfoDto {
+    private FoodDto foodDto;
+    private String username;
+    private boolean isGlobal;
 }

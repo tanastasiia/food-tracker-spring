@@ -1,6 +1,5 @@
 angular.module("statistics", [])
     .controller("StatisticsCtrl", ["$scope", "$http", function ($scope, $http) {
-        console.log("statisticsCtrl")
 
         $scope.todaysFood = [];
         $scope.allFood = [];
@@ -10,6 +9,7 @@ angular.module("statistics", [])
         $scope.todaysFoodPageMax = 0;
         $scope.foodPage = 0;
         $scope.foodPageMax = 0;
+
         $scope.getTodaysFood = function () {
             $http({
                 method: "GET",
@@ -25,7 +25,7 @@ angular.module("statistics", [])
                     console.log("users error")
                 }
             );
-        }
+        };
         $scope.getAllFood = function () {
             $http({
                 method: "GET",

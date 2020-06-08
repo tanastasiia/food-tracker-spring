@@ -2,42 +2,54 @@ package ua.training.foodtracker.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.foodtracker.config.LocaleConfiguration;
 import ua.training.foodtracker.config.SecurityConfiguration;
-import ua.training.foodtracker.dto.UserDTO;
-import ua.training.foodtracker.dto.UsersDTO;
+import ua.training.foodtracker.config.Utils;
+import ua.training.foodtracker.dto.PasswordChangeDto;
+import ua.training.foodtracker.dto.UserDto;
+import ua.training.foodtracker.dto.lists.UsersDto;
 import ua.training.foodtracker.entity.Role;
 import ua.training.foodtracker.entity.User;
+import ua.training.foodtracker.exception.PasswordIncorrectException;
+import ua.training.foodtracker.exception.UserExistsException;
 import ua.training.foodtracker.exception.UserNotExistsException;
 import ua.training.foodtracker.repository.UserRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Slf4j
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
+    private UserRepository userRepository;
     private SecurityConfiguration securityConfiguration;
-    @Autowired
     private LocaleConfiguration localeConfiguration;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public UserService(UserRepository userRepository, SecurityConfiguration securityConfiguration, LocaleConfiguration localeConfiguration) {
+        this.userRepository = userRepository;
+        this.securityConfiguration = securityConfiguration;
+        this.localeConfiguration = localeConfiguration;
+    }
+
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    public UserDTO getUserDTOByUsername(String username) throws UserNotExistsException {
+    public UserDto getUserDTOByUsername(String username) throws UserNotExistsException {
 
         User user = userRepository.findByUsername(username).orElseThrow(UserNotExistsException::new);
 
-        return UserDTO.builder()
+        return UserDto.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .height(user.getHeight())
@@ -46,21 +58,25 @@ public class UserService {
                         .getMessage(user.getActivityLevel(), null, LocaleContextHolder.getLocale()))
                 .age(user.getAge())
                 .firstName(user.getFirstName())
-                .firstNameUa(user.getFirstNameUa())
+                .lastName(user.getLastName())
                 .gender(user.getGender()).build();
 
     }
 
-    @Transactional
-    public User save(UserDTO userDto) {
+   // @Transactional ???
+    public User save(UserDto userDto) throws UserExistsException {
+        if (findByUsername(userDto.getUsername()).isPresent()) {
+            log.info("UserExistsException throwing");
+            throw new UserExistsException();
+        }
+
         return userRepository.save(
                 User.builder()
                         .username(userDto.getUsername())
-                        .active(true)
                         .password(securityConfiguration.getPasswordEncoder().encode(userDto.getPassword()))
                         .firstName(userDto.getFirstName())
-                        .firstNameUa(userDto.getFirstNameUa())
-                        .roles(Role.ROLE_USER.name())
+                        .lastName(userDto.getLastName())
+                        .role(Role.ROLE_USER.name())
                         .height(userDto.getHeight())
                         .weight(userDto.getWeight())
                         .activityLevel(userDto.getActivityLevel())
@@ -70,15 +86,31 @@ public class UserService {
         );
     }
 
-    public UsersDTO findAll() {
-        return UsersDTO.builder().users(userRepository.findAll()).build();
+    public UsersDto findAll() {
+        return UsersDto.builder().users(userRepository.findAll()).build();
 
     }
 
     @Transactional
-    public void updatePassword(String newPassword, String username) {
+    public void updatePassword(PasswordChangeDto passwordChangeDTO) throws PasswordIncorrectException {
+
+        if (!securityConfiguration.getPasswordEncoder()
+                .matches(passwordChangeDTO.getOldPassword(), Utils.getPrincipal().getPassword())) {
+            throw new PasswordIncorrectException();
+        }
+
         userRepository.updatePassword(securityConfiguration.getPasswordEncoder()
-                .encode(newPassword), username);
+                .encode(passwordChangeDTO.getNewPassword()), Utils.getPrincipal().getUsername());
+    }
+
+    @Transactional
+    public void changeRole(Long userId, String role){
+        userRepository.updateRole(role.equals(Role.ROLE_ADMIN.name())? Role.ROLE_USER.name() :Role.ROLE_ADMIN.name(), userId  );
+    }
+
+    @Transactional
+    public void updateAccount(User user){
+        entityManager.merge(user);
     }
 
 }

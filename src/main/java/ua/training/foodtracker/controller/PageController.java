@@ -5,27 +5,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ua.training.foodtracker.entity.Role;
-import ua.training.foodtracker.entity.UserDetailsImpl;
+import ua.training.foodtracker.entity.User;
 
 @Slf4j
 @Controller
 public class PageController {
 
+
     @ModelAttribute("isAdmin")
     public boolean isAdmin() {
-        return ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+        return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .getAuthorities()
                 .contains(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name()));
     }
 
-    @ModelAttribute("principal")
-    public UserDetailsImpl principal() {
-        return (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+/*    @ModelAttribute("principal")
+    public User principal() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+    @ModelAttribute("user")
+    public User user() throws UserNotExistsException {
+        return userService.findByUsername(Utils.getPrincipalUsername()).orElseThrow(UserNotExistsException::new);
+    }*/
 
     @GetMapping("/admin")
     public String admin() {
@@ -40,7 +46,7 @@ public class PageController {
     }
 
     @GetMapping("/account/change")
-    public String accountChange() {
+    public String accountChange(Model model) {
         log.info("account change page");
         return "user/account_change";
     }
