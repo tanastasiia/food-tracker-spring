@@ -3,6 +3,7 @@ package ua.training.foodtracker.config;
 import lombok.experimental.UtilityClass;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
+import ua.training.foodtracker.entity.Role;
 import ua.training.foodtracker.entity.User;
 
 import java.util.Locale;
@@ -16,10 +17,6 @@ public class Utils {
 
     public Long getPrincipalId() {
         return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-    }
-
-    public String getPrincipalUsername() {
-        return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     }
 
     public boolean isLocaleUa() {

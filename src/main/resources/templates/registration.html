@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" ng-app="registration_form" ng-controller="RegistrationCtrl">
 <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -13,8 +8,7 @@
     <script type="text/javascript" th:src="@{/js/reg.js}"></script>
     <title th:text="#{messages.title.registration}"></title>
 </head>
-
-<body ng-app="registration_form" ng-controller="RegistrationCtrl">
+<body>
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -103,7 +97,7 @@
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
                            ng-model="user.gender" value="MALE">
-                    <label class="form-check-label" for="inlineRadio1"  th:text="#{messages.enter.male}"></label>
+                    <label class="form-check-label" for="inlineRadio1" th:text="#{messages.enter.male}"></label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"

@@ -22,16 +22,16 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Service for {@link Meal} entity
+ */
 @Slf4j
 @Service
 public class MealService {
 
     private MealRepository mealRepository;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
-    public MealService( MealRepository mealRepository){
+    public MealService(MealRepository mealRepository) {
         this.mealRepository = mealRepository;
     }
 
@@ -39,16 +39,26 @@ public class MealService {
     private final BigDecimal HUNDRED = new BigDecimal(100);
     private final BigDecimal THOUSAND = new BigDecimal(1000);
 
-    public Meal save(Food food, Integer amount) {
+    /**
+     * Save meal to database
+     *
+     * @return saved meal
+     */
+    public Meal save(Food food, Integer amount, User user) {
 
         return mealRepository.save(Meal.builder()
-                .user(entityManager.getReference(User.class, Utils.getPrincipalId()))
+                .user(user)
                 .food(food)
                 .amount(amount)
                 .dateTime(LocalDateTime.now())
                 .build());
     }
 
+    /**
+     * Find all meals
+     *
+     * @return page of meals
+     */
     public MealsDto findAllMeals(Pageable pageable) {
 
         return MealsDto.builder().meals(mealRepository.findAll(pageable).map(meal -> MealDto.builder()
@@ -60,6 +70,11 @@ public class MealService {
                 .build();
     }
 
+    /**
+     * Find all today's meals for user
+     *
+     * @return today's user's meals page
+     */
     public UsersMealStatDto findAllTodaysMeals(Pageable pageable, Long userId) {
         return UsersMealStatDto.builder()
                 .usersFood(mealRepository
@@ -70,12 +85,18 @@ public class MealService {
                                 .amount(meal.getAmount())
                                 .date(meal.getDateTime().toLocalDate())
                                 .time(meal.getDateTime().toLocalTime())
-                                .foodName(ServiceUtils.getLocalizedName(meal.getFood()))
+                                .foodName(ServiceUtils.getLocalizedFoodName(meal.getFood()))
                                 .build()))
                 .build();
 
     }
 
+
+    /**
+     * Find all meals for user
+     *
+     * @return user's meals page
+     */
     public UsersMealStatDto findAllPrincipalStat(Pageable pageable, Long userId) {
 
         return UsersMealStatDto.builder()
@@ -85,14 +106,17 @@ public class MealService {
                                 .amount(meal.getAmount())
                                 .date(meal.getDateTime().toLocalDate())
                                 .time(meal.getDateTime().toLocalTime())
-                                .foodName(ServiceUtils.getLocalizedName(meal.getFood()))
+                                .foodName(ServiceUtils.getLocalizedFoodName(meal.getFood()))
                                 .build()))
                 .build();
     }
 
-    public UserTodayStatisticsDto getTodaysPrincipalStatistics(Long userId)  {
+    /**
+     * Counts calories norm and consumed today's calories, carbs, protein, fat for user
+     */
+    public UserTodayStatisticsDto getTodaysPrincipalStatistics(User user) {
         List<Meal> meals = mealRepository
-                .findByUser_IdAndDateTimeBetween(userId,
+                .findByUser_IdAndDateTimeBetween(user.getId(),
                         LocalDateTime.of(LocalDate.now(), LocalTime.MIN),
                         LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
 
@@ -101,12 +125,14 @@ public class MealService {
                 .carbs(sumFoodElements(meals, Food::getCarbs))
                 .protein(sumFoodElements(meals, Food::getProtein))
                 .fat(sumFoodElements(meals, Food::getFat))
-                .caloriesNorm(countCaloriesNorm())
+                .caloriesNorm(ServiceUtils.countCaloriesNorm(user))
                 .build();
     }
 
-
-    public int todaysCalories() {
+    /**
+     * Counts consumed today's calories
+     */
+    public Integer todaysCalories() {
         return mealRepository
                 .findByUser_IdAndDateTimeBetween(Utils.getPrincipalId(),
                         LocalDateTime.of(LocalDate.now(), LocalTime.MIN),
@@ -116,6 +142,9 @@ public class MealService {
                 .reduce(Integer::sum).orElse(0);
     }
 
+    /**
+     * Summing calories from meals
+     */
     private Integer sumFoodCalories(List<Meal> meals) {
         return meals.stream()
                 .mapToInt(meal -> meal.getFood().getCalories() * meal.getAmount() / 100)
@@ -123,16 +152,13 @@ public class MealService {
                 .orElse(0);
     }
 
-    public int countCaloriesNorm() {
-        User user = entityManager.getReference(User.class, Utils.getPrincipalId());
-
-        return (int) (ActivityLevel.valueOf(user.getActivityLevel()).getValue()
-                * (Gender.valueOf(user.getGender()).getValue()
-                + 10 * user.getWeight()
-                + 6.25 * user.getHeight()
-                - 5 * user.getAge()));
-    }
-
+    /**
+     * Summing carbs, fat or protein from meals
+     *
+     * @param meals  meals to sum from
+     * @param getter food getter (for carbs, fat or protein)
+     * @return food element sum in grams
+     */
     private BigDecimal sumFoodElements(List<Meal> meals, Function<Food, Integer> getter) {
         return meals.stream()
                 .map(meal -> new BigDecimal(getter.apply(meal.getFood()) * meal.getAmount()).divide(HUNDRED, 1))

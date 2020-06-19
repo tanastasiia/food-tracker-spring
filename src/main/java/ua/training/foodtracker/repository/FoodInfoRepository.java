@@ -16,6 +16,5 @@ public interface FoodInfoRepository extends JpaRepository<FoodInfo, Long> {
     Optional<FoodInfo> findAllByFoodNameOrFoodNameUaAndUserIdOrGlobal(@Param("foodName") String foodName,
                                                                       @Param("userId") Long userId);
 
-
     List<FoodInfo> findAllByUser_IdOrIsGlobalTrue(Long userId);
 }

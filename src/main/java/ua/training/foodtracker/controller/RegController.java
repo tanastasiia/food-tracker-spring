@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ua.training.foodtracker.dto.UserDto;
+import ua.training.foodtracker.dto.UserRegDto;
 import ua.training.foodtracker.exception.UserExistsException;
 import ua.training.foodtracker.service.UserService;
 
@@ -24,9 +24,8 @@ public class RegController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("register")
-    public void register(UserDto userDto) throws UserExistsException {
-
-        log.info("Saved user: {}", userService.save(userDto));
+    public void register(UserRegDto userRegDto) throws UserExistsException {
+        log.info("Saved user: {}", userService.register(userRegDto));
     }
 
 }

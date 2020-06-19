@@ -17,7 +17,7 @@ public class GuestPageController {
     @GetMapping("/registration")
     public String reg() {
         log.info("registration page");
-        return "registration";
+        return "registration.html";
     }
 
     @GetMapping("/denied")

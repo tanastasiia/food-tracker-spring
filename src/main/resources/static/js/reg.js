@@ -1,5 +1,5 @@
 angular.module("registration_form",[])
-    .controller("RegistrationCtrl", function ($scope, $http) {
+    .controller("RegistrationCtrl", ["$scope", "$http", function ($scope, $http) {
         console.log("regCtrl");
         $scope.user = {};
         $scope.showSuccess = false;
@@ -14,7 +14,7 @@ angular.module("registration_form",[])
                 headers: { "Content-Type" : "application/x-www-form-urlencoded" }
             }).then(
                 (data) => {
-                    console.log("succes");
+                    console.log("success");
                     $scope.showSuccess = true;
                     $scope.showError = false;
                 },
@@ -25,4 +25,4 @@ angular.module("registration_form",[])
                 }
             );
         }
-    });
+    }]);

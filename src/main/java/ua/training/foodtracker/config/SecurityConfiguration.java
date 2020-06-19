@@ -20,7 +20,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
@@ -29,15 +28,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/registration**", "/api/registration/**",
-                        "/static/js/**", "/login*").permitAll()
+                .antMatchers("/js/**").permitAll()
+                .antMatchers("/login*", "/registration*", "/api/registration/**").anonymous()
                 .antMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
-                .antMatchers("/user/**", "/api/user/**", "/account/**", "/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/user/**", "/api/user/**", "/**").hasAnyRole("ADMIN", "USER")
                 .anyRequest().authenticated()
                 .and()
                     .formLogin()
                     .loginPage("/login")
-                    .permitAll()
+                    .permitAll(false)
                 .and()
                     .logout()
                     .invalidateHttpSession(true)
@@ -46,7 +45,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/login?logout")
                     .permitAll()
                 .and()
-                    .exceptionHandling().accessDeniedPage("/denied")
+                    .exceptionHandling()
+                    .accessDeniedPage("/denied")
                 .and()
                     .csrf().disable();
 

@@ -24,8 +24,6 @@ public class FoodDto {
     private BigDecimal protein;
     private BigDecimal fat;
     private Integer calories;
-    private Optional<Boolean> isGlobal;
-
 
     public FoodDto(Food food) {
         this.name = food.getName();

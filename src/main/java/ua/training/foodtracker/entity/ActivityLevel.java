@@ -1,5 +1,8 @@
 package ua.training.foodtracker.entity;
 
+/**
+ * Activity levels with coefficients for calories norm formula
+ */
 public enum ActivityLevel {
     FIRST(1.200),
     SECOND(1.375),

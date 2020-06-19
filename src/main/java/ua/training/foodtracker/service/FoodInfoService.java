@@ -18,30 +18,35 @@ import javax.persistence.PersistenceContext;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service for {@link FoodInfo} entity
+ */
 @Slf4j
 @Service
 public class FoodInfoService {
 
     private FoodInfoRepository foodInfoRepository;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     public FoodInfoService(FoodInfoRepository foodInfoRepository) {
         this.foodInfoRepository = foodInfoRepository;
     }
 
+
+    /**
+     * Find food by food name available for the user
+     */
     public Optional<FoodInfo> findFoodByFoodNameAndUser(String foodName, Long userId) {
-
         return foodInfoRepository.findAllByFoodNameOrFoodNameUaAndUserIdOrGlobal(foodName, userId);
-
     }
 
+    /**
+     * Save new food
+     */
     @Transactional
-    public Optional<FoodInfo> save(FoodDto foodDto, Long userId) {
+    public Optional<FoodInfo> save(FoodDto foodDto, User user) {
 
-        if (!findFoodByFoodNameAndUser(foodDto.getName(), userId).isPresent()) {
-            boolean isGlobal = foodDto.getIsGlobal().orElse(false);
+        if (!findFoodByFoodNameAndUser(foodDto.getName(), user.getId()).isPresent()) {
+            boolean isGlobal = false; // foodDto.getIsGlobal().orElse(false);
             return Optional.of(foodInfoRepository
                     .save(FoodInfo.builder()
                             .food(Food.builder()
@@ -53,7 +58,7 @@ public class FoodInfoService {
                                     .calories(foodDto.getCalories())
                                     .build())
                             .isGlobal(isGlobal)
-                            .user(entityManager.getReference(User.class, userId))
+                            .user(user)
                             .build()));
 
         }
@@ -61,6 +66,11 @@ public class FoodInfoService {
 
     }
 
+    /**
+     * Find all food
+     *
+     * @return page of food infos
+     */
     public FoodInfosDto findAll(Pageable pageable) {
         return FoodInfosDto.builder()
                 .foodInfos(foodInfoRepository
@@ -75,10 +85,13 @@ public class FoodInfoService {
 
     }
 
+    /**
+     * List of food names available for user
+     */
     public FoodNamesDto foodNamesList(Long userId) {
         return FoodNamesDto.builder()
                 .foodNames(foodInfoRepository.findAllByUser_IdOrIsGlobalTrue(userId).stream()
-                        .map(foodInfo -> ServiceUtils.getLocalizedName(foodInfo.getFood()))
+                        .map(foodInfo -> ServiceUtils.getLocalizedFoodName(foodInfo.getFood()))
                         .filter(str -> !str.isEmpty())
                         .collect(Collectors.toList()))
                 .build();
