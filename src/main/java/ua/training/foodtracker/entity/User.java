@@ -97,8 +97,4 @@ public class User implements Serializable, UserDetails {
         return true;
     }
 
-    public Long getId() {
-        return id;
-    }
-
 }

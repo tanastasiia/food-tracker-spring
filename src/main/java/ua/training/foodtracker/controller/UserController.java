@@ -2,6 +2,7 @@ package ua.training.foodtracker.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -12,6 +13,7 @@ import ua.training.foodtracker.dto.*;
 import ua.training.foodtracker.dto.lists.FoodNamesDto;
 import ua.training.foodtracker.dto.lists.UsersMealStatDto;
 import ua.training.foodtracker.entity.Food;
+import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.exception.FoodNotExistsException;
 import ua.training.foodtracker.exception.PasswordIncorrectException;
 import ua.training.foodtracker.service.FoodInfoService;
@@ -140,9 +142,10 @@ public class UserController {
      */
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("change_account")
-    public void changeAccount(UserDto user) {
-        userService.updateAccount(Utils.getPrincipal(), user);
-        log.info("Update account: " + user.toString());
+    public void changeAccount(UserDto userDto) {
+        User user = userService.updateAccount(Utils.getPrincipal(), userDto);
+        Utils.updatePrincipal(user);
+        log.info("Updated account: " + user.toString());
     }
 
     /**

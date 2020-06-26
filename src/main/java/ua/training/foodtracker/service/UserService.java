@@ -39,7 +39,8 @@ public class UserService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public UserService(UserRepository userRepository, SecurityConfiguration securityConfiguration, LocaleConfiguration localeConfiguration) {
+    public UserService(UserRepository userRepository, SecurityConfiguration securityConfiguration,
+                       LocaleConfiguration localeConfiguration) {
         this.userRepository = userRepository;
         this.securityConfiguration = securityConfiguration;
         this.localeConfiguration = localeConfiguration;
@@ -68,6 +69,7 @@ public class UserService {
                         .getMessage(user.getGender(), null, LocaleContextHolder.getLocale())).build();
 
     }
+
     /**
      * Find user by username
      */
@@ -147,9 +149,9 @@ public class UserService {
      * @param user updated user info
      */
     @Transactional
-    public void updateAccount(User user, UserDto userDto) {
+    public User updateAccount(User user, UserDto userDto) {
 
-        entityManager.merge(User.builder()
+        User newUser = User.builder()
                 .id(user.getId())
                 .password(user.getPassword())
                 .role(user.getRole())
@@ -161,7 +163,11 @@ public class UserService {
                 .activityLevel(userDto.getActivityLevel())
                 .age(userDto.getAge())
                 .gender(userDto.getGender())
-                .build());
+                .build();
+
+        return entityManager.merge(newUser);
+
+
     }
 
 }

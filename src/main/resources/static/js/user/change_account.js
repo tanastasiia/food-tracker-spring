@@ -1,7 +1,5 @@
-
 angular.module("accountChange", [])
     .controller("AccountChangeCtrl", ["$scope", "$http", function ($scope, $http) {
-        console.log("AccountChangeCtrl");
 
         $scope.newUser = {};
         $scope.user = {};
@@ -22,8 +20,9 @@ angular.module("accountChange", [])
                 }
             );
         };
-        $scope.initForm = function(){
-            $scope.user =  $scope.getUser();
+
+        $scope.initForm = function () {
+            $scope.user = $scope.getUser();
         };
 
         $scope.changeAccount = function (user) {
@@ -32,7 +31,7 @@ angular.module("accountChange", [])
                 method: "POST",
                 url: "/api/user/change_account",
                 data: $.param(user),
-                headers: {"Content-Type" : "application/x-www-form-urlencoded" }
+                headers: {"Content-Type": "application/x-www-form-urlencoded"}
             }).then(
                 function (data) {
                     location.replace("/account");

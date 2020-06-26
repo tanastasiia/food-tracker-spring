@@ -1,8 +1,6 @@
 angular.module("admin", [])
     .controller("UserCtrl", ["$scope", "$http", function ($scope, $http) {
-        console.log("userCtrl")
         $scope.users = [];
-        $scope.test = "test123";
         $scope.foodInfos = [];
         $scope.meals = [];
 
@@ -60,8 +58,6 @@ angular.module("admin", [])
             );
         }
         $scope.changeRole = function (userId, role) {
-            console.log(userId);
-            console.log(role);
             $http({
                 method: "POST",
                 url: "/api/admin/change_role",

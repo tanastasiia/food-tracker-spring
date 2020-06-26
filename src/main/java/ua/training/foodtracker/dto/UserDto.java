@@ -33,6 +33,4 @@ public class UserDto {
         this.role = user.getRole();
         this.gender = user.getGender();
     }
-
-
 }

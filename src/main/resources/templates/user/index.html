@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"  ng-app="food" ng-controller="FoodCtrl">
+<html xmlns:th="http://www.thymeleaf.org" ng-app="food" ng-controller="FoodCtrl">
 <head>
     <meta charset="UTF-8">
     <title>Home User</title>
@@ -26,16 +26,19 @@
             left: 0;
             right: 0;
         }
+
         .autocomplete-items div {
             padding: 10px;
             cursor: pointer;
             background-color: #fff;
             border-bottom: 1px solid #d4d4d4;
         }
+
         .autocomplete-items div:hover {
             /*when hovering an item:*/
             background-color: #e9e9e9;
         }
+
         .autocomplete-active {
             /*when navigating through the items using the arrow keys:*/
             background-color: DodgerBlue !important;
@@ -61,7 +64,7 @@
 </nav>
 
 
-<div class="container" style="margin-top: 60px"  ng-init="getuserStat()">
+<div class="container" style="margin-top: 60px" ng-init="getuserStat()">
 
     <div class="row">
         <div class="col-md-8 col-md-offset-2" ng-model="userStat">
@@ -82,7 +85,7 @@
                     <p th:text="#{messages.alert.norm.exceeded}"></p>
                 </div>
             </div>
-            <div >
+            <div>
                 <div class="alert alert-light">
                     <p><strong th:text="#{messages.todays.calories}"></strong>{{userStat.calories}}</p>
                     <p><strong th:text="#{messages.calories.norm}"></strong>{{userStat.caloriesNorm}}</p>
@@ -90,10 +93,6 @@
             </div>
 
 
-
-
-
-            
             <form method="post" style="margin-bottom: 30px"
                   name="form" autocomplete="off" ng-submit="addMeal(meal)" ng-init="foodNamesList()">
 
@@ -110,8 +109,8 @@
                 <div class="form-group">
                     <label th:text="#{messages.enter.food.name}" for="food-name"></label>
                     <div class="autocomplete">
-                    <input class="form-control form-control-lg" id="food-name" type="text" placeholder=""
-                          required></div>
+                        <input class="form-control form-control-lg" id="food-name" type="text" placeholder=""
+                               required></div>
                 </div>
 
                 <div class="form-group">
@@ -121,7 +120,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="margin-top:30px"
-                        th:text="#{messages.button.submit}" >
+                        th:text="#{messages.button.submit}">
                 </button>
             </form>
 
@@ -147,7 +146,7 @@
                 <div class="form-group">
                     <label for="new-food-name" th:text="#{messages.enter.food.name}"></label>
                     <input class="form-control form-control-lg" id="new-food-name" type="text"
-                           placeholder="" ng-model="food.name" >
+                           placeholder="" ng-model="food.name">
                 </div>
 
                 <div class="form-group">
@@ -183,10 +182,7 @@
                 <button th:text="#{messages.button.submit}" type="submit" class="btn btn-primary"
                         style="margin-top:30px" ng-disabled="form.$invalid">
                 </button>
-
-
             </form>
-
         </div>
     </div>
 

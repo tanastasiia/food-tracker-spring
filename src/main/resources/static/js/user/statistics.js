@@ -19,10 +19,10 @@ angular.module("statistics", [])
             }).then(
                 function (data) {
                     $scope.todaysFood = data.data.usersFood.content;
-                    $scope.todaysFoodPageMax = data.data.usersFood.totalPages-1;
+                    $scope.todaysFoodPageMax = data.data.usersFood.totalPages - 1;
                 },
                 function (error) {
-                    console.log("users error")
+                    console.log("getTodaysFood error")
                 }
             );
         };
@@ -35,10 +35,10 @@ angular.module("statistics", [])
             }).then(
                 function (data) {
                     $scope.allFood = data.data.usersFood.content;
-                    $scope.foodPageMax = data.data.usersFood.totalPages-1;
+                    $scope.foodPageMax = data.data.usersFood.totalPages - 1;
                 },
                 function (error) {
-                    console.log("users error")
+                    console.log("getAllFood error")
                 }
             );
         }
@@ -52,7 +52,7 @@ angular.module("statistics", [])
                     $scope.userStat = data.data;
                 },
                 function (error) {
-                    console.log("users error")
+                    console.log("getuserStat error")
                 }
             );
         }

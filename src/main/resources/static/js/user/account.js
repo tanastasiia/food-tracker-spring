@@ -1,7 +1,5 @@
 angular.module("account", [])
     .controller("AccountCtrl", ["$scope", "$http", function ($scope, $http) {
-        console.log("acc")
-
         $scope.user = {};
 
         $scope.getUser = function () {
