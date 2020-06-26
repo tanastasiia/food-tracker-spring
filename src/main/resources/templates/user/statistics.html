@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"  ng-app="statistics" ng-controller="StatisticsCtrl">
+<html xmlns:th="http://www.thymeleaf.org" ng-app="statistics" ng-controller="StatisticsCtrl">
 <head>
     <meta charset="UTF-8">
     <title>Statistics</title>
@@ -7,6 +7,11 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+    <script src="https://cdn.rawgit.com/jtblin/angular-chart.js/0.8.8/dist/angular-chart.min.js"></script>
+
 
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
@@ -38,6 +43,7 @@
 
 
     <h2 class="page-header" th:text="#{messages.title.statistics.counting}"></h2>
+
     <table class="table" ng-init="getuserStat()">
         <thead class="thead-light" np-model="userStat">
         <tr>
@@ -70,6 +76,21 @@
         </tbody>
     </table>
 
+    <h2 class="page-header" th:text="#{messages.title.statistics.chart}"></h2>
+    <div ng-init="getCaloriesChartData(7)" style="width: 60%">
+        <canvas id="base" class="chart-bar"
+                chart-data="data" chart-labels="labels" chart-colors="colors">
+        </canvas>
+
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+                <input type="radio" name="options" id="option1" checked ng-click="getCaloriesChartData(7)"
+                       th:text="#{messages.title.statistics.chart.days7}"></label>
+            <label class="btn btn-secondary">
+                <input type="radio" name="options" id="option2" ng-click="getCaloriesChartData(30)"
+                       th:text="#{messages.title.statistics.chart.days30}"></label>
+        </div>
+    </div>
 
     <h2 class="page-header" th:text="#{messages.title.statistics.dates}"></h2>
     <div id="tabs">
@@ -112,7 +133,7 @@
                             <span class="sr-only">Previous</span>
                         </a>
                     </li>
-                    <li class="page-item"><a class="page-link" href=""  th:text="#{messages.button.first}"
+                    <li class="page-item"><a class="page-link" href="" th:text="#{messages.button.first}"
                                              ng-click="todaysFoodPage=0;getTodaysFood()"></a></li>
                     <li class="page-item"><a class="page-link" href="" th:text="#{messages.button.last}"
                                              ng-click="todaysFoodPage=todaysFoodPageMax;getTodaysFood()"></a></li>
@@ -131,7 +152,7 @@
 
         <div id="tabs-2">
 
-            <table class="table"  ng-model="allFood">
+            <table class="table" ng-model="allFood">
                 <thead class="thead-light">
                 <tr>
                     <th scope="col" th:text="#{messages.enter.food.name}"></th>
@@ -153,17 +174,19 @@
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                     <li class="page-item">
-                        <a class="page-link" href="" aria-label="Previous" ng-click="foodPage=(foodPage>0)?foodPage-1:foodPage;getAllFood()">
+                        <a class="page-link" href="" aria-label="Previous"
+                           ng-click="foodPage=(foodPage>0)?foodPage-1:foodPage;getAllFood()">
                             <span aria-hidden="true">&laquo;</span>
                             <span class="sr-only">Previous</span>
                         </a>
                     </li>
-                    <li class="page-item"><a class="page-link" href=""  th:text="#{messages.button.first}"
+                    <li class="page-item"><a class="page-link" href="" th:text="#{messages.button.first}"
                                              ng-click="foodPage=0;getAllFood()"></a></li>
                     <li class="page-item"><a class="page-link" href="" th:text="#{messages.button.last}"
                                              ng-click="foodPage=foodPageMax;getAllFood()"></a></li>
                     <li class="page-item">
-                        <a class="page-link" href="" aria-label="Next" ng-click="foodPage=(foodPage<foodPageMax)?foodPage+1:foodPage;getAllFood()">
+                        <a class="page-link" href="" aria-label="Next"
+                           ng-click="foodPage=(foodPage<foodPageMax)?foodPage+1:foodPage;getAllFood()">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Next</span>
                         </a>
@@ -177,5 +200,7 @@
 
 
 </div>
+
+
 </body>
 </html>

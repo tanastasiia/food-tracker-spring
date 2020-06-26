@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.training.foodtracker.config.Utils;
+import ua.training.foodtracker.dto.CaloriesChartData;
 import ua.training.foodtracker.dto.MealDto;
 import ua.training.foodtracker.dto.UserMealStatDto;
 import ua.training.foodtracker.dto.UserTodayStatisticsDto;
@@ -12,15 +13,17 @@ import ua.training.foodtracker.dto.lists.UsersMealStatDto;
 import ua.training.foodtracker.entity.*;
 import ua.training.foodtracker.repository.MealRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for {@link Meal} entity
@@ -132,14 +135,59 @@ public class MealService {
     /**
      * Counts consumed today's calories
      */
-    public Integer todaysCalories() {
+    public Integer todaysCalories(Long userId) {
         return mealRepository
-                .findByUser_IdAndDateTimeBetween(Utils.getPrincipalId(),
+                .findByUser_IdAndDateTimeBetween(userId,
                         LocalDateTime.of(LocalDate.now(), LocalTime.MIN),
                         LocalDateTime.of(LocalDate.now(), LocalTime.MAX))
                 .stream()
                 .mapToInt(meal -> meal.getFood().getCalories() * meal.getAmount() / 100)
-                .reduce(Integer::sum).orElse(0);
+                .reduce(Integer::sum)
+                .orElse(0);
+    }
+
+    /**
+     * Counts calories in meals list
+     *
+     * @param meals
+     * @return sum of meals calories
+     */
+    private Integer countCalories(List<Meal> meals) {
+        return meals.stream()
+                .mapToInt(meal -> meal.getFood().getCalories() * meal.getAmount() / 100)
+                .reduce(Integer::sum)
+                .orElse(0);
+    }
+
+    /**
+     * Make bar chart of calories comsumed by days
+     * @param user
+     * @param days on x-axis
+     * @return sum of calories by dates and dates
+     */
+    public CaloriesChartData getCaloriesChartData(User user, int days) {
+
+        Map<LocalDate, List<Meal>> mealsByDates = mealRepository
+                .findByUser_IdAndDateTimeBetween(user.getId(),
+                        LocalDateTime.of(LocalDate.now().minusDays(days - 1), LocalTime.MIN),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.MAX))
+                .stream()
+                .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(), Collectors.toList()));
+
+        List<LocalDate> dates = Stream
+                .iterate(LocalDate.now().minusDays(days - 1), date -> date.plusDays(1))
+                .limit(days)
+                .collect(Collectors.toList());
+
+        List<Integer> calories = dates.stream()
+                .map(date -> mealsByDates.containsKey(date) ? countCalories(mealsByDates.get(date)) : 0)
+                .collect(Collectors.toList());
+
+        return CaloriesChartData.builder()
+                .data(calories)
+                .labels(dates.stream().map(date -> date.format(ServiceUtils.dayMonthDateFormat)).collect(Collectors.toList()))
+                .caloriesNorm(ServiceUtils.countCaloriesNorm(user))
+                .build();
     }
 
     /**

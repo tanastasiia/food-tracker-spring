@@ -9,6 +9,9 @@ import ua.training.foodtracker.entity.User;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @UtilityClass
@@ -16,6 +19,8 @@ public class ServiceUtils {
 
     public static final Integer GRAMS_TO_MILLIGRAMS = 1000;
     public static final BigDecimal MILLIGRAMS_TO_GRAMS = BigDecimal.valueOf(1000d);
+
+    public static DateTimeFormatter dayMonthDateFormat = DateTimeFormatter.ofPattern("dd/MM");
 
     /**
      * Converts grams to milligrams

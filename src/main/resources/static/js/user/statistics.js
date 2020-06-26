@@ -1,4 +1,4 @@
-angular.module("statistics", [])
+angular.module("statistics", ['chart.js'])
     .controller("StatisticsCtrl", ["$scope", "$http", function ($scope, $http) {
 
         $scope.todaysFood = [];
@@ -9,6 +9,45 @@ angular.module("statistics", [])
         $scope.todaysFoodPageMax = 0;
         $scope.foodPage = 0;
         $scope.foodPageMax = 0;
+
+        $scope.labels = [];
+
+        $scope.data = [];
+
+
+        $scope.getCaloriesChartData = function (numOfDays) {
+            $http({
+                method: "GET",
+                url: "/api/user/calories_chart_data",
+                headers: {"Content-Type": "application/json"},
+                params: {days: numOfDays}
+            }).then(
+                function (data) {
+                    console.log(data.data.labels);
+                    $scope.labels = data.data.labels;
+                    $scope.data = [data.data.data/*, Array($scope.labels.length).fill(data.data.caloriesNorm)*/];
+                },
+                function (error) {
+                    console.log("getCaloriesChartData error")
+                }
+            );
+        };
+
+        $scope.getuserStat = function () {
+            $http({
+                method: "GET",
+                url: "/api/user/user_statistics",
+                headers: {"Content-Type": "application/json"}
+            }).then(
+                function (data) {
+                    $scope.userStat = data.data;
+                },
+                function (error) {
+                    console.log("getuserStat error")
+                }
+            );
+        };
+
 
         $scope.getTodaysFood = function () {
             $http({
@@ -42,20 +81,7 @@ angular.module("statistics", [])
                 }
             );
         }
-        $scope.getuserStat = function () {
-            $http({
-                method: "GET",
-                url: "/api/user/user_statistics",
-                headers: {"Content-Type": "application/json"}
-            }).then(
-                function (data) {
-                    $scope.userStat = data.data;
-                },
-                function (error) {
-                    console.log("getuserStat error")
-                }
-            );
-        }
 
 
-    }]);
+    }])
+;

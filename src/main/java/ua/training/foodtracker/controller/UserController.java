@@ -96,6 +96,17 @@ public class UserController {
     }
 
     /**
+     * Get data for calories chart
+     *
+     * @see PageController#statistics()
+     */
+    @GetMapping("calories_chart_data")
+    public CaloriesChartData getCaloriesChartData(@RequestParam("days") int days) {
+        log.info("calories_chart_data");
+        return mealService.getCaloriesChartData(Utils.getPrincipal(), days);
+    }
+
+    /**
      * Add meal in home page
      *
      * @return refreshed after meal amount of today's calories
@@ -107,7 +118,7 @@ public class UserController {
     public int addUserFood(UserMealDto userMealDto) throws FoodNotExistsException {
         Food food = foodService.findByName(userMealDto.getFoodName()).orElseThrow(FoodNotExistsException::new);
         log.info("Meal added: {}", mealService.save(food, userMealDto.getAmount(), Utils.getPrincipal()));
-        return mealService.todaysCalories();
+        return mealService.todaysCalories(Utils.getPrincipalId());
     }
 
     /**
