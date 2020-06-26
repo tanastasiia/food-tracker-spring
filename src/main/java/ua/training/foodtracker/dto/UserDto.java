@@ -3,6 +3,8 @@ package ua.training.foodtracker.dto;
 import lombok.*;
 import ua.training.foodtracker.entity.User;
 
+import java.time.LocalDate;
+
 
 @Getter
 @Setter
@@ -18,7 +20,7 @@ public class UserDto {
     private Integer height;
     private Integer weight;
     private String activityLevel;
-    private Integer age;
+    private LocalDate dateOfBirth;
     private String role;
     private String gender;
 
@@ -27,7 +29,7 @@ public class UserDto {
         this.height = user.getHeight();
         this.weight = user.getWeight();
         this.activityLevel = user.getActivityLevel();
-        this.age = user.getAge();
+        this.dateOfBirth = user.getDateOfBirth();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.role = user.getRole();

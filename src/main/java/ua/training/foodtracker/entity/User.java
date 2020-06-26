@@ -10,6 +10,7 @@ import ua.training.foodtracker.config.SecurityConfiguration;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,8 +54,8 @@ public class User implements Serializable, UserDetails {
     @Column(name = "activity_level", nullable = false)
     private String activityLevel;
 
-    @Column(name = "age", nullable = false)
-    private Integer age;
+    @Column(name = "date_of_birth", nullable = false)
+    private LocalDate dateOfBirth;
 
     @Column(name = "gender", nullable = false)
     private String gender;

@@ -62,7 +62,7 @@ public class UserService {
                 .weight(user.getWeight())
                 .activityLevel(localeConfiguration.getMessageResource()
                         .getMessage(user.getActivityLevel(), null, LocaleContextHolder.getLocale()))
-                .age(user.getAge())
+                .dateOfBirth(user.getDateOfBirth())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .gender(localeConfiguration.getMessageResource()
@@ -101,7 +101,7 @@ public class UserService {
                         .height(userRegDto.getHeight())
                         .weight(userRegDto.getWeight())
                         .activityLevel(userRegDto.getActivityLevel())
-                        .age(userRegDto.getAge())
+                        .dateOfBirth(userRegDto.getDateOfBirth())
                         .gender(userRegDto.getGender())
                         .build()
         );
@@ -161,7 +161,7 @@ public class UserService {
                 .height(userDto.getHeight())
                 .weight(userDto.getWeight())
                 .activityLevel(userDto.getActivityLevel())
-                .age(userDto.getAge())
+                .dateOfBirth(userDto.getDateOfBirth())
                 .gender(userDto.getGender())
                 .build();
 

@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -63,6 +65,6 @@ public class ServiceUtils {
                 * (Gender.valueOf(user.getGender()).getValue()
                 + 10 * user.getWeight()
                 + 6.25 * user.getHeight()
-                - 5 * user.getAge()));
+                - 5 * Period.between(user.getDateOfBirth(), LocalDate.now()).getYears()));
     }
 }
