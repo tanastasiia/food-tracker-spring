@@ -10,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode
 
 @Entity
 @Table(name = "food_info")

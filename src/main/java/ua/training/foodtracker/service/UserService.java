@@ -22,6 +22,7 @@ import ua.training.foodtracker.repository.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.rmi.ServerException;
+import java.time.LocalDate;
 import java.util.Optional;
 
 /**
@@ -35,15 +36,17 @@ public class UserService {
     private UserRepository userRepository;
     private SecurityConfiguration securityConfiguration;
     private LocaleConfiguration localeConfiguration;
+    private ServiceUtils serviceUtils;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     public UserService(UserRepository userRepository, SecurityConfiguration securityConfiguration,
-                       LocaleConfiguration localeConfiguration) {
+                       LocaleConfiguration localeConfiguration, ServiceUtils serviceUtils) {
         this.userRepository = userRepository;
         this.securityConfiguration = securityConfiguration;
         this.localeConfiguration = localeConfiguration;
+        this.serviceUtils = serviceUtils;
     }
 
 
@@ -62,7 +65,7 @@ public class UserService {
                 .weight(user.getWeight())
                 .activityLevel(localeConfiguration.getMessageResource()
                         .getMessage(user.getActivityLevel(), null, LocaleContextHolder.getLocale()))
-                .dateOfBirth(user.getDateOfBirth())
+                .dateOfBirth(serviceUtils.getLocalizedDate(user.getDateOfBirth()))
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .gender(localeConfiguration.getMessageResource()
@@ -73,8 +76,8 @@ public class UserService {
     /**
      * Find user by username
      */
-    public UserDto getUserDto(User user) {
-        return new UserDto(user);
+    public UserRegDto getUserRegDto(User user) {
+        return new UserRegDto(user);
 
     }
 
@@ -121,15 +124,15 @@ public class UserService {
      * @param passwordChangeDTO user, old and new password
      */
     @Transactional
-    public void updatePassword(PasswordChangeDto passwordChangeDTO) throws PasswordIncorrectException {
+    public void updatePassword(PasswordChangeDto passwordChangeDTO, User user) throws PasswordIncorrectException {
 
         if (!securityConfiguration.getPasswordEncoder()
-                .matches(passwordChangeDTO.getOldPassword(), Utils.getPrincipal().getPassword())) {
+                .matches(passwordChangeDTO.getOldPassword(), user.getPassword())) {
             throw new PasswordIncorrectException();
         }
 
         userRepository.updatePassword(securityConfiguration.getPasswordEncoder()
-                .encode(passwordChangeDTO.getNewPassword()), Utils.getPrincipal().getUsername());
+                .encode(passwordChangeDTO.getNewPassword()), user.getUsername());
     }
 
     /**
@@ -161,13 +164,11 @@ public class UserService {
                 .height(userDto.getHeight())
                 .weight(userDto.getWeight())
                 .activityLevel(userDto.getActivityLevel())
-                .dateOfBirth(userDto.getDateOfBirth())
+                .dateOfBirth(serviceUtils.parseLocalizedDate(userDto.getDateOfBirth()))
                 .gender(userDto.getGender())
                 .build();
 
         return entityManager.merge(newUser);
-
-
     }
 
 }

@@ -1,6 +1,8 @@
 package ua.training.foodtracker.service;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
 import ua.training.foodtracker.config.Utils;
 import ua.training.foodtracker.entity.ActivityLevel;
 import ua.training.foodtracker.entity.Food;
@@ -9,20 +11,23 @@ import ua.training.foodtracker.entity.User;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
 
-@UtilityClass
+@Component
 public class ServiceUtils {
+
+    private final Locale LOCALE_UA = new Locale("ua");
 
     public static final Integer GRAMS_TO_MILLIGRAMS = 1000;
     public static final BigDecimal MILLIGRAMS_TO_GRAMS = BigDecimal.valueOf(1000d);
 
     public static DateTimeFormatter dayMonthDateFormat = DateTimeFormatter.ofPattern("dd/MM");
+    public static DateTimeFormatter dateFormatUa = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    public static DateTimeFormatter dateFormatEng = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     /**
      * Converts grams to milligrams
@@ -52,9 +57,31 @@ public class ServiceUtils {
     public String getLocalizedFoodName(Food food) {
         Optional<String> nameUa = Optional.ofNullable(food.getNameUa());
         Optional<String> name = Optional.ofNullable(food.getName());
-        return Utils.isLocaleUa()
+        return isLocaleUa()
                 ? nameUa.orElse(name.orElse(""))
                 : name.orElse(nameUa.orElse(""));
+    }
+
+    /**
+     * Returns localized date
+     * @param date date to localize
+     * @return localized date
+     */
+    public String getLocalizedDate(LocalDate date) {
+        return isLocaleUa()
+                ? date.format(dateFormatUa)
+                : date.format(dateFormatEng);
+    }
+
+    /**
+     * Parse localized date
+     * @param date date to localize
+     * @return localized date
+     */
+    public LocalDate parseLocalizedDate(String date) {
+        return isLocaleUa()
+                ? LocalDate.parse(date, dateFormatUa)
+                :  LocalDate.parse(date, dateFormatEng);
     }
 
     /**
@@ -66,5 +93,9 @@ public class ServiceUtils {
                 + 10 * user.getWeight()
                 + 6.25 * user.getHeight()
                 - 5 * Period.between(user.getDateOfBirth(), LocalDate.now()).getYears()));
+    }
+
+    public boolean isLocaleUa() {
+        return LocaleContextHolder.getLocale().equals(LOCALE_UA);
     }
 }

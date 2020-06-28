@@ -12,7 +12,8 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
 
     List<Meal> findByUser_IdAndDateTimeBetween(Long userId, LocalDateTime dateTime1, LocalDateTime dateTime2);
 
-    Page<Meal> findByUser_IdAndDateTimeBetween(Long userId, LocalDateTime dateTime1,
+    Page<Meal> findByUser_IdAndDateTimeBetween(Long userId,
+                                               LocalDateTime dateTime1,
                                                LocalDateTime dateTime2,
                                                Pageable pageable);
 

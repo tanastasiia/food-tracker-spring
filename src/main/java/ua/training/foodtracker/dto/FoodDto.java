@@ -25,14 +25,4 @@ public class FoodDto {
     private BigDecimal fat;
     private Integer calories;
 
-    public FoodDto(Food food) {
-        this.name = food.getName();
-        this.nameUa = food.getNameUa();
-        this.carbs = ServiceUtils.toGrams(food.getCarbs());
-        this.protein = ServiceUtils.toGrams(food.getProtein());
-        this.fat = ServiceUtils.toGrams(food.getFat());
-        this.calories = food.getCalories();
-    }
-
-
 }

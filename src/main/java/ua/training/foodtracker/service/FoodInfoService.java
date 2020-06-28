@@ -26,9 +26,11 @@ import java.util.stream.Collectors;
 public class FoodInfoService {
 
     private FoodInfoRepository foodInfoRepository;
+    private ServiceUtils serviceUtils;
 
-    public FoodInfoService(FoodInfoRepository foodInfoRepository) {
+    public FoodInfoService(FoodInfoRepository foodInfoRepository, ServiceUtils serviceUtils) {
         this.foodInfoRepository = foodInfoRepository;
+        this.serviceUtils = serviceUtils;
     }
 
 
@@ -52,9 +54,9 @@ public class FoodInfoService {
                             .food(Food.builder()
                                     .name(foodDto.getName())
                                     .nameUa(foodDto.getNameUa())
-                                    .carbs(ServiceUtils.toMilligrams(foodDto.getCarbs()))
-                                    .protein(ServiceUtils.toMilligrams(foodDto.getProtein()))
-                                    .fat(ServiceUtils.toMilligrams(foodDto.getFat()))
+                                    .carbs(serviceUtils.toMilligrams(foodDto.getCarbs()))
+                                    .protein(serviceUtils.toMilligrams(foodDto.getProtein()))
+                                    .fat(serviceUtils.toMilligrams(foodDto.getFat()))
                                     .calories(foodDto.getCalories())
                                     .build())
                             .isGlobal(isGlobal)
@@ -78,7 +80,14 @@ public class FoodInfoService {
                         .map(foodInfo -> FoodInfoDto.builder()
                                 .isGlobal(foodInfo.getIsGlobal())
                                 .username(foodInfo.getUser() == null ? null : foodInfo.getUser().getUsername())
-                                .foodDto(new FoodDto(foodInfo.getFood()))
+                                .foodDto(FoodDto.builder()
+                                        .name(foodInfo.getFood().getName())
+                                        .nameUa(foodInfo.getFood().getNameUa())
+                                        .carbs(serviceUtils.toGrams(foodInfo.getFood().getCarbs()))
+                                        .protein(serviceUtils.toGrams(foodInfo.getFood().getProtein()))
+                                        .fat(serviceUtils.toGrams(foodInfo.getFood().getFat()))
+                                        .calories(foodInfo.getFood().getCalories())
+                                        .build())
                                 .build()))
                 .build();
 
@@ -91,7 +100,7 @@ public class FoodInfoService {
     public FoodNamesDto foodNamesList(Long userId) {
         return FoodNamesDto.builder()
                 .foodNames(foodInfoRepository.findAllByUser_IdOrIsGlobalTrue(userId).stream()
-                        .map(foodInfo -> ServiceUtils.getLocalizedFoodName(foodInfo.getFood()))
+                        .map(foodInfo -> serviceUtils.getLocalizedFoodName(foodInfo.getFood()))
                         .filter(str -> !str.isEmpty())
                         .collect(Collectors.toList()))
                 .build();

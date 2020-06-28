@@ -21,7 +21,7 @@ import java.util.Collections;
 @NoArgsConstructor
 @Builder
 @ToString
-
+@EqualsAndHashCode
 @Entity
 @Table(name = "users")
 public class User implements Serializable, UserDetails {

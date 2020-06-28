@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode
 public class UserDto {
 
     private String username;
@@ -20,19 +21,8 @@ public class UserDto {
     private Integer height;
     private Integer weight;
     private String activityLevel;
-    private LocalDate dateOfBirth;
+    private String dateOfBirth;
     private String role;
     private String gender;
 
-    public UserDto(User user) {
-        this.username = user.getUsername();
-        this.height = user.getHeight();
-        this.weight = user.getWeight();
-        this.activityLevel = user.getActivityLevel();
-        this.dateOfBirth = user.getDateOfBirth();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.role = user.getRole();
-        this.gender = user.getGender();
-    }
 }

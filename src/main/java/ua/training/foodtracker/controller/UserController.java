@@ -34,12 +34,15 @@ public class UserController {
     private MealService mealService;
     private FoodService foodService;
     private FoodInfoService foodInfoService;
+    private Utils utils;
 
-    public UserController(MealService mealService, FoodService foodService, FoodInfoService foodInfoService, UserService userService) {
+    public UserController(MealService mealService, FoodService foodService, FoodInfoService foodInfoService,
+                          UserService userService, Utils utils) {
         this.mealService = mealService;
         this.foodService = foodService;
         this.foodInfoService = foodInfoService;
         this.userService = userService;
+        this.utils = utils;
     }
 
     /**
@@ -50,7 +53,7 @@ public class UserController {
      */
     @GetMapping("user_account")
     public UserDto userDto() {
-        return userService.getLocalizedUserDto(Utils.getPrincipal());
+        return userService.getLocalizedUserDto(utils.getPrincipal());
     }
 
     /**
@@ -60,8 +63,8 @@ public class UserController {
      * @see PageController#accountChange()
      */
     @GetMapping("user")
-    public UserDto user() {
-        return userService.getUserDto(Utils.getPrincipal());
+    public UserRegDto user() {
+        return userService.getUserRegDto(utils.getPrincipal());
     }
 
     /**
@@ -71,7 +74,7 @@ public class UserController {
      */
     @GetMapping("todays_food")
     public UsersMealStatDto getTodaysFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
-        return mealService.findAllTodaysMeals(pageable, Utils.getPrincipalId());
+        return mealService.findAllTodaysMeals(pageable, utils.getPrincipalId());
     }
 
     /**
@@ -81,7 +84,7 @@ public class UserController {
      */
     @GetMapping("all_food")
     public UsersMealStatDto getAllFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
-        return mealService.findAllPrincipalStat(pageable, Utils.getPrincipalId());
+        return mealService.findAllPrincipalStat(pageable, utils.getPrincipalId());
     }
 
     /**
@@ -92,7 +95,7 @@ public class UserController {
     @GetMapping("user_statistics")
     public UserTodayStatisticsDto getTodaysUserStatistics() {
         log.info("usert stat");
-        return mealService.getTodaysPrincipalStatistics(Utils.getPrincipal());
+        return mealService.getTodaysPrincipalStatistics(utils.getPrincipal());
     }
 
     /**
@@ -103,7 +106,7 @@ public class UserController {
     @GetMapping("calories_chart_data")
     public CaloriesChartData getCaloriesChartData(@RequestParam("days") int days) {
         log.info("calories_chart_data");
-        return mealService.getCaloriesChartData(Utils.getPrincipal(), days);
+        return mealService.getCaloriesChartData(utils.getPrincipal(), days);
     }
 
     /**
@@ -117,8 +120,8 @@ public class UserController {
     @PostMapping("add_meal")
     public int addUserFood(UserMealDto userMealDto) throws FoodNotExistsException {
         Food food = foodService.findByName(userMealDto.getFoodName()).orElseThrow(FoodNotExistsException::new);
-        log.info("Meal added: {}", mealService.save(food, userMealDto.getAmount(), Utils.getPrincipal()));
-        return mealService.todaysCalories(Utils.getPrincipalId());
+        log.info("Meal added: {}", mealService.save(food, userMealDto.getAmount(), utils.getPrincipal()));
+        return mealService.todaysCalories(utils.getPrincipalId());
     }
 
     /**
@@ -129,7 +132,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add_food")
     public void addFood(FoodDto foodDTO) {
-        log.info("Food added: {}", foodInfoService.save(foodDTO, Utils.getPrincipal()));
+        log.info("Food added: {}", foodInfoService.save(foodDTO, utils.getPrincipal()));
     }
 
     /**
@@ -142,7 +145,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("change_password")
     public void changePassword(PasswordChangeDto passwordChangeDTO) throws PasswordIncorrectException {
-        userService.updatePassword(passwordChangeDTO);
+        userService.updatePassword(passwordChangeDTO, utils.getPrincipal());
         log.info("Password changed");
     }
 
@@ -154,8 +157,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("change_account")
     public void changeAccount(UserDto userDto) {
-        User user = userService.updateAccount(Utils.getPrincipal(), userDto);
-        Utils.updatePrincipal(user);
+        User user = userService.updateAccount(utils.getPrincipal(), userDto);
+        utils.updatePrincipal(user);
         log.info("Updated account: " + user.toString());
     }
 
@@ -168,7 +171,7 @@ public class UserController {
     @GetMapping("food_names_list")
     public FoodNamesDto foodNamesList() {
         log.info("Food names list ");
-        return foodInfoService.foodNamesList(Utils.getPrincipalId());
+        return foodInfoService.foodNamesList(utils.getPrincipalId());
     }
 
 }

@@ -33,9 +33,11 @@ import java.util.stream.Stream;
 public class MealService {
 
     private MealRepository mealRepository;
+    private ServiceUtils serviceUtils;
 
-    public MealService(MealRepository mealRepository) {
+    public MealService(MealRepository mealRepository, ServiceUtils serviceUtils) {
         this.mealRepository = mealRepository;
+        this.serviceUtils = serviceUtils;
     }
 
 
@@ -66,7 +68,7 @@ public class MealService {
 
         return MealsDto.builder().meals(mealRepository.findAll(pageable).map(meal -> MealDto.builder()
                 .username(meal.getUser().getUsername())
-                .foodName(Utils.isLocaleUa() ? meal.getFood().getNameUa() : meal.getFood().getName())
+                .foodName(serviceUtils.isLocaleUa() ? meal.getFood().getNameUa() : meal.getFood().getName())
                 .amount(meal.getAmount())
                 .date(meal.getDateTime().toLocalDate())
                 .time(meal.getDateTime().toLocalTime()).build()))
@@ -84,11 +86,12 @@ public class MealService {
                         .findByUser_IdAndDateTimeBetween(userId,
                                 LocalDateTime.of(LocalDate.now(), LocalTime.MIN),
                                 LocalDateTime.of(LocalDate.now(), LocalTime.MAX),
-                                pageable).map(meal -> UserMealStatDto.builder()
+                                pageable)
+                        .map(meal -> UserMealStatDto.builder()
                                 .amount(meal.getAmount())
                                 .date(meal.getDateTime().toLocalDate())
                                 .time(meal.getDateTime().toLocalTime())
-                                .foodName(ServiceUtils.getLocalizedFoodName(meal.getFood()))
+                                .foodName(serviceUtils.getLocalizedFoodName(meal.getFood()))
                                 .build()))
                 .build();
 
@@ -109,7 +112,7 @@ public class MealService {
                                 .amount(meal.getAmount())
                                 .date(meal.getDateTime().toLocalDate())
                                 .time(meal.getDateTime().toLocalTime())
-                                .foodName(ServiceUtils.getLocalizedFoodName(meal.getFood()))
+                                .foodName(serviceUtils.getLocalizedFoodName(meal.getFood()))
                                 .build()))
                 .build();
     }
@@ -128,7 +131,7 @@ public class MealService {
                 .carbs(sumFoodElements(meals, Food::getCarbs))
                 .protein(sumFoodElements(meals, Food::getProtein))
                 .fat(sumFoodElements(meals, Food::getFat))
-                .caloriesNorm(ServiceUtils.countCaloriesNorm(user))
+                .caloriesNorm(serviceUtils.countCaloriesNorm(user))
                 .build();
     }
 
@@ -161,6 +164,7 @@ public class MealService {
 
     /**
      * Make bar chart of calories comsumed by days
+     *
      * @param user
      * @param days on x-axis
      * @return sum of calories by dates and dates
@@ -186,7 +190,7 @@ public class MealService {
         return CaloriesChartData.builder()
                 .data(calories)
                 .labels(dates.stream().map(date -> date.format(ServiceUtils.dayMonthDateFormat)).collect(Collectors.toList()))
-                .caloriesNorm(ServiceUtils.countCaloriesNorm(user))
+                .caloriesNorm(serviceUtils.countCaloriesNorm(user))
                 .build();
     }
 

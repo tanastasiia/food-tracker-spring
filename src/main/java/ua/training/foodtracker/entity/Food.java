@@ -12,6 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode
 
 @Entity
 @Table(name = "food")
