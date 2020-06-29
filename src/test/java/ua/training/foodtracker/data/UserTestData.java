@@ -33,12 +33,12 @@ public class UserTestData {
     public UserDto USER_DTO_UA = UserDto.builder()
             .weight(60).height(170).gender("Чоловіча").activityLevel("Низький").username("annat")
             .dateOfBirth(LocalDate.now().minusYears(22).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-            .lastName("Doe").firstName("Jane").build();
+            .lastName("Doe").firstName("Jane").role("Користувач").build();
 
     public UserDto USER_DTO_ENG = UserDto.builder()
             .weight(60).height(170).gender("Male").activityLevel("Low").username("annat")
             .dateOfBirth(LocalDate.now().minusYears(22).format(DateTimeFormatter.ofPattern("MM/dd/yyyy")))
-            .lastName("Doe").firstName("Jane").build();
+            .lastName("Doe").firstName("Jane").role("User").build();
 
     public User USER_2 = User.builder()
             .id(3L).weight(56).role("ROLE_USER").height(160).gender("MALE").activityLevel("FIRST")

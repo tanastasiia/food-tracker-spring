@@ -1,13 +1,12 @@
 package ua.training.foodtracker.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ua.training.foodtracker.config.LocaleConfiguration;
 import ua.training.foodtracker.config.Utils;
-import ua.training.foodtracker.dto.CaloriesChartData;
-import ua.training.foodtracker.dto.MealDto;
-import ua.training.foodtracker.dto.UserMealStatDto;
-import ua.training.foodtracker.dto.UserTodayStatisticsDto;
+import ua.training.foodtracker.dto.*;
 import ua.training.foodtracker.dto.lists.MealsDto;
 import ua.training.foodtracker.dto.lists.UsersMealStatDto;
 import ua.training.foodtracker.entity.*;
@@ -34,10 +33,12 @@ public class MealService {
 
     private MealRepository mealRepository;
     private ServiceUtils serviceUtils;
+    private LocaleConfiguration localeConfiguration;
 
-    public MealService(MealRepository mealRepository, ServiceUtils serviceUtils) {
+    public MealService(MealRepository mealRepository, ServiceUtils serviceUtils, LocaleConfiguration localeConfiguration) {
         this.mealRepository = mealRepository;
         this.serviceUtils = serviceUtils;
+        this.localeConfiguration = localeConfiguration;
     }
 
 
@@ -49,14 +50,18 @@ public class MealService {
      *
      * @return saved meal
      */
-    public Meal save(Food food, Integer amount, User user) {
+    public AddMealResponse save(Food food, Integer amount, User user) {
 
-        return mealRepository.save(Meal.builder()
+        mealRepository.save(Meal.builder()
                 .user(user)
                 .food(food)
                 .amount(amount)
                 .dateTime(LocalDateTime.now())
                 .build());
+        return AddMealResponse.builder()
+                .calories(todaysCalories(user.getId()))
+                .message(localeConfiguration.getMessageResource()
+                        .getMessage("messages.alert.meal.added", null, LocaleContextHolder.getLocale())).build();
     }
 
     /**
@@ -68,9 +73,9 @@ public class MealService {
 
         return MealsDto.builder().meals(mealRepository.findAll(pageable).map(meal -> MealDto.builder()
                 .username(meal.getUser().getUsername())
-                .foodName(serviceUtils.isLocaleUa() ? meal.getFood().getNameUa() : meal.getFood().getName())
+                .foodName(serviceUtils.getLocalizedFoodName(meal.getFood()))
                 .amount(meal.getAmount())
-                .date(meal.getDateTime().toLocalDate())
+                .date(serviceUtils.getLocalizedDate(meal.getDateTime().toLocalDate()))
                 .time(meal.getDateTime().toLocalTime()).build()))
                 .build();
     }
@@ -103,7 +108,7 @@ public class MealService {
      *
      * @return user's meals page
      */
-    public UsersMealStatDto findAllPrincipalStat(Pageable pageable, Long userId) {
+    public UsersMealStatDto findAllUserStat(Pageable pageable, Long userId) {
 
         return UsersMealStatDto.builder()
                 .usersFood(mealRepository
@@ -120,7 +125,7 @@ public class MealService {
     /**
      * Counts calories norm and consumed today's calories, carbs, protein, fat for user
      */
-    public UserTodayStatisticsDto getTodaysPrincipalStatistics(User user) {
+    public UserTodayStatisticsDto getTodaysUsersStatistics(User user) {
         List<Meal> meals = mealRepository
                 .findByUser_IdAndDateTimeBetween(user.getId(),
                         LocalDateTime.of(LocalDate.now(), LocalTime.MIN),
@@ -176,7 +181,8 @@ public class MealService {
                         LocalDateTime.of(LocalDate.now().minusDays(days - 1), LocalTime.MIN),
                         LocalDateTime.of(LocalDate.now(), LocalTime.MAX))
                 .stream()
-                .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(), Collectors.toList()));
+                .collect(Collectors
+                        .groupingBy(meal -> meal.getDateTime().toLocalDate(), Collectors.toList()));
 
         List<LocalDate> dates = Stream
                 .iterate(LocalDate.now().minusDays(days - 1), date -> date.plusDays(1))

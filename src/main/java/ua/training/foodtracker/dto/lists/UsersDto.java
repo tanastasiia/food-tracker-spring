@@ -1,6 +1,7 @@
 package ua.training.foodtracker.dto.lists;
 
 import lombok.*;
+import ua.training.foodtracker.dto.UserDto;
 import ua.training.foodtracker.entity.User;
 
 import java.util.List;
@@ -12,6 +13,6 @@ import java.util.List;
 @Builder
 @ToString
 public class UsersDto {
-    private List<User> users;
+    private List<UserDto> users;
 
 }

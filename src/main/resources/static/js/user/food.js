@@ -3,17 +3,14 @@ angular.module("food", [])
 
         $scope.userFood = {};
         $scope.food = {};
-        $scope.showAddUserSuccess = false;
-        $scope.showAddSuccess = false;
-        $scope.showAddUserError = false;
-        $scope.showAddError = false;
 
         $scope.userStat = {};
 
         $scope.addMeal = function () {
+            removeAlertDivs();
             var userFood = {
-                "foodName": document.getElementById("food-name").value,
-                "amount": document.getElementById("food-amount").value
+                "foodName": document.getElementById("meal-foodName").value,
+                "amount": document.getElementById("meal-amount").value
             };
             $http({
                 method: "POST",
@@ -22,21 +19,23 @@ angular.module("food", [])
                 headers: {"Content-Type": "application/x-www-form-urlencoded"}
             }).then(
                 function (data) {
-                    $scope.showAddUserSuccess = true;
-                    $scope.showAddSuccess = false;
-                    $scope.showAddUserError = false;
-                    $scope.showAddError = false;
-                    $scope.userStat.calories = data.data;
+                    createAlertDiv(data.data.message, "meal-form-header", "info");
+                    $scope.userStat.calories = data.data.calories;
                 },
                 function (error) {
-                    $scope.showAddUserError = true;
-                    $scope.showAddUserSuccess = false;
-                    $scope.showAddSuccess = false;
-                    $scope.showAddError = false;
+
+                    if (error.status === 406) {
+                        error.data.forEach(msg => {
+                            createAlertDiv(msg.message, "meal-" + msg.field, "danger");
+                        });
+                    } else {
+                        createAlertDiv(error.data.message, "meal-form-header", "danger");
+                    }
                 }
             );
-        }
+        };
         $scope.addFood = function (food) {
+            removeAlertDivs();
             $http({
                 method: "POST",
                 url: "/api/user/add_food",
@@ -44,18 +43,16 @@ angular.module("food", [])
                 headers: {"Content-Type": "application/x-www-form-urlencoded"}
             }).then(
                 function (data) {
-                    $scope.showAddSuccess = true;
-                    $scope.showAddUserSuccess = false;
-                    $scope.showAddUserError = false;
-                    $scope.showAddError = false;
-
+                    createAlertDiv(data.data.message, "food-form-header", "info");
                 },
                 function (error) {
-                    $scope.showAddError = true;
-                    $scope.showAddUserSuccess = false;
-                    $scope.showAddSuccess = false;
-                    $scope.showAddUserError = false;
-
+                    if (error.status === 406) {
+                        error.data.forEach(msg => {
+                            createAlertDiv(msg.message, "food-" + msg.field, "danger");
+                        });
+                    } else {
+                        createAlertDiv(error.data.message, "food-form-header", "danger");
+                    }
                 }
             );
         };
@@ -84,13 +81,32 @@ angular.module("food", [])
                 headers: {"Content-Type": "application/json"}
             }).then(
                 function (data) {
-                    autocomplete(document.getElementById("food-name"), data.data.foodNames);
+                    autocomplete(document.getElementById("meal-foodName"), data.data.foodNames);
                 }
             );
         }
 
 
     }]);
+
+function createAlertDiv(msg, beforeElementId, infoOrDanger) {
+    var errorField = document.getElementById(beforeElementId);
+    var errorDiv = document.createElement("DIV");
+    errorDiv.className = "alert alert-" + infoOrDanger;
+    errorDiv.appendChild(document.createTextNode(msg));
+    errorField.parentNode.insertBefore(errorDiv, errorField.nextSibling);
+}
+
+function removeAlertDivs() {
+    var divs = document.getElementsByClassName("alert alert-danger");
+    while (divs[0]) {
+        divs[0].parentNode.removeChild(divs[0]);
+    }
+    divs = document.getElementsByClassName("alert alert-info");
+    while (divs[0]) {
+        divs[0].parentNode.removeChild(divs[0]);
+    }
+}
 
 
 function autocomplete(inp, arr) {

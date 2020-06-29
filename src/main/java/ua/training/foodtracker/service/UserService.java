@@ -3,6 +3,9 @@ package ua.training.foodtracker.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.foodtracker.config.LocaleConfiguration;
@@ -23,14 +26,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.rmi.ServerException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service for {@link User} entity
  */
 @Slf4j
 @Service
-public class UserService {
+public class UserService  implements UserDetailsService {
 
 
     private UserRepository userRepository;
@@ -50,6 +55,12 @@ public class UserService {
     }
 
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.orElseThrow(() -> new UsernameNotFoundException("username " + username + " not found"));
+    }
+
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
@@ -68,6 +79,8 @@ public class UserService {
                 .dateOfBirth(serviceUtils.getLocalizedDate(user.getDateOfBirth()))
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .role(localeConfiguration.getMessageResource()
+                        .getMessage(user.getRole(), null, LocaleContextHolder.getLocale()))
                 .gender(localeConfiguration.getMessageResource()
                         .getMessage(user.getGender(), null, LocaleContextHolder.getLocale())).build();
 
@@ -78,6 +91,7 @@ public class UserService {
      */
     public UserRegDto getUserRegDto(User user) {
         return new UserRegDto(user);
+
 
     }
 
@@ -104,7 +118,7 @@ public class UserService {
                         .height(userRegDto.getHeight())
                         .weight(userRegDto.getWeight())
                         .activityLevel(userRegDto.getActivityLevel())
-                        .dateOfBirth(userRegDto.getDateOfBirth())
+                        .dateOfBirth(LocalDate.parse(userRegDto.getDateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE))
                         .gender(userRegDto.getGender())
                         .build()
         );
@@ -114,8 +128,9 @@ public class UserService {
      * Find all users
      */
     public UsersDto findAll() {
-        return UsersDto.builder().users(userRepository.findAll()).build();
-
+        return UsersDto.builder()
+                .users(userRepository.findAll().stream().map(this::getLocalizedUserDto).collect(Collectors.toList()))
+                .build();
     }
 
     /**
@@ -164,7 +179,7 @@ public class UserService {
                 .height(userDto.getHeight())
                 .weight(userDto.getWeight())
                 .activityLevel(userDto.getActivityLevel())
-                .dateOfBirth(serviceUtils.parseLocalizedDate(userDto.getDateOfBirth()))
+                .dateOfBirth(LocalDate.parse(userDto.getDateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE))
                 .gender(userDto.getGender())
                 .build();
 

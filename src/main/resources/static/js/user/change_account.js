@@ -26,7 +26,8 @@ angular.module("accountChange", [])
         };
 
         $scope.changeAccount = function (user) {
-
+            removeAlertDivs();
+            user.dateOfBirth = document.getElementById("dateOfBirth").value;
             $http({
                 method: "POST",
                 url: "/api/user/change_account",
@@ -37,10 +38,32 @@ angular.module("accountChange", [])
                     location.replace("/account");
                 },
                 function (error) {
-                    $scope.showError = true;
+                    error.data.forEach(msg => {
+                        createAlertDiv(msg.message, msg.field, "danger");
+                    });
+                   // $scope.showError = true;
                 }
             );
         }
 
 
     }]);
+
+function createAlertDiv(msg, beforeElementId, infoOrDanger) {
+    var errorField = document.getElementById(beforeElementId);
+    var errorDiv = document.createElement("DIV");
+    errorDiv.className = "alert alert-" + infoOrDanger;
+    errorDiv.appendChild(document.createTextNode(msg));
+    errorField.parentNode.insertBefore(errorDiv, errorField.nextSibling);
+}
+
+function removeAlertDivs() {
+    var divs = document.getElementsByClassName("alert alert-danger");
+    while (divs[0]) {
+        divs[0].parentNode.removeChild(divs[0]);
+    }
+    divs = document.getElementsByClassName("alert alert-info");
+    while (divs[0]) {
+        divs[0].parentNode.removeChild(divs[0]);
+    }
+}

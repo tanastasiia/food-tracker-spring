@@ -1,16 +1,20 @@
 package ua.training.foodtracker.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.training.foodtracker.config.LocaleConfiguration;
 import ua.training.foodtracker.dto.FoodDto;
 import ua.training.foodtracker.dto.FoodInfoDto;
+import ua.training.foodtracker.dto.MessageDto;
 import ua.training.foodtracker.dto.lists.FoodInfosDto;
 import ua.training.foodtracker.dto.lists.FoodNamesDto;
 import ua.training.foodtracker.entity.Food;
 import ua.training.foodtracker.entity.FoodInfo;
 import ua.training.foodtracker.entity.User;
+import ua.training.foodtracker.exception.FoodExistsException;
 import ua.training.foodtracker.repository.FoodInfoRepository;
 
 import javax.persistence.EntityManager;
@@ -27,10 +31,14 @@ public class FoodInfoService {
 
     private FoodInfoRepository foodInfoRepository;
     private ServiceUtils serviceUtils;
+    private LocaleConfiguration localeConfiguration;
 
-    public FoodInfoService(FoodInfoRepository foodInfoRepository, ServiceUtils serviceUtils) {
+    private String addSuccessMessageKey = "messages.alert.food.added";
+
+    public FoodInfoService(FoodInfoRepository foodInfoRepository, ServiceUtils serviceUtils, LocaleConfiguration localeConfiguration) {
         this.foodInfoRepository = foodInfoRepository;
         this.serviceUtils = serviceUtils;
+        this.localeConfiguration = localeConfiguration;
     }
 
 
@@ -43,13 +51,16 @@ public class FoodInfoService {
 
     /**
      * Save new food
+     *
+     * @retuen success of fail localized message
      */
     @Transactional
-    public Optional<FoodInfo> save(FoodDto foodDto, User user) {
+    public MessageDto save(FoodDto foodDto, User user) throws FoodExistsException {
 
+        Optional<FoodInfo> savedFood = Optional.empty();
         if (!findFoodByFoodNameAndUser(foodDto.getName(), user.getId()).isPresent()) {
             boolean isGlobal = false; // foodDto.getIsGlobal().orElse(false);
-            return Optional.of(foodInfoRepository
+            savedFood = Optional.of(foodInfoRepository
                     .save(FoodInfo.builder()
                             .food(Food.builder()
                                     .name(foodDto.getName())
@@ -62,9 +73,13 @@ public class FoodInfoService {
                             .isGlobal(isGlobal)
                             .user(user)
                             .build()));
+            return MessageDto.builder()
+                    .message(localeConfiguration.getMessageResource()
+                            .getMessage( addSuccessMessageKey, null, LocaleContextHolder.getLocale()))
+                    .build();
 
-        }
-        return Optional.empty();
+        } else throw new FoodExistsException();
+
 
     }
 

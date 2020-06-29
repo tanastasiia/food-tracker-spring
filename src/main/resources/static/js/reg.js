@@ -6,7 +6,7 @@ angular.module("registration_form",[])
         $scope.showError = false;
 
         $scope.addUser = function(user){
-            console.log("adding");
+            user.dateOfBirth = document.getElementById("dateOfBirth").value;
             $http({
                 method: "POST",
                 url: "/api/registration/register",

@@ -77,8 +77,8 @@ public class UserControllerTest {
     public void init() {
         utils.updatePrincipal(userTestData.USER);
         userService = new UserService(userRepository, securityConfiguration, localeConfiguration, serviceUtils);
-        mealService = new MealService(mealRepository, serviceUtils);
-        foodInfoService = new FoodInfoService(foodInfoRepository, serviceUtils);
+        mealService = new MealService(mealRepository, serviceUtils, localeConfiguration);
+        foodInfoService = new FoodInfoService(foodInfoRepository, serviceUtils, localeConfiguration);
 
     }
 

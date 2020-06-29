@@ -2,7 +2,7 @@ package ua.training.foodtracker.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -14,12 +14,16 @@ import ua.training.foodtracker.dto.lists.FoodNamesDto;
 import ua.training.foodtracker.dto.lists.UsersMealStatDto;
 import ua.training.foodtracker.entity.Food;
 import ua.training.foodtracker.entity.User;
+import ua.training.foodtracker.exception.FoodExistsException;
 import ua.training.foodtracker.exception.FoodNotExistsException;
 import ua.training.foodtracker.exception.PasswordIncorrectException;
 import ua.training.foodtracker.service.FoodInfoService;
 import ua.training.foodtracker.service.FoodService;
 import ua.training.foodtracker.service.MealService;
 import ua.training.foodtracker.service.UserService;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 
 /**
@@ -84,7 +88,7 @@ public class UserController {
      */
     @GetMapping("all_food")
     public UsersMealStatDto getAllFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
-        return mealService.findAllPrincipalStat(pageable, utils.getPrincipalId());
+        return mealService.findAllUserStat(pageable, utils.getPrincipalId());
     }
 
     /**
@@ -95,7 +99,7 @@ public class UserController {
     @GetMapping("user_statistics")
     public UserTodayStatisticsDto getTodaysUserStatistics() {
         log.info("usert stat");
-        return mealService.getTodaysPrincipalStatistics(utils.getPrincipal());
+        return mealService.getTodaysUsersStatistics(utils.getPrincipal());
     }
 
     /**
@@ -118,21 +122,23 @@ public class UserController {
      */
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping("add_meal")
-    public int addUserFood(UserMealDto userMealDto) throws FoodNotExistsException {
+    public AddMealResponse addUserFood(@Valid UserMealDto userMealDto) throws FoodNotExistsException {
         Food food = foodService.findByName(userMealDto.getFoodName()).orElseThrow(FoodNotExistsException::new);
-        log.info("Meal added: {}", mealService.save(food, userMealDto.getAmount(), utils.getPrincipal()));
-        return mealService.todaysCalories(utils.getPrincipalId());
+        log.info("Meal adding: {}", userMealDto.toString());
+        return  mealService.save(food, userMealDto.getAmount(), utils.getPrincipal());
     }
 
     /**
      * Add new food in home page
      *
+     * @return localized success message
      * @see PageController#home()
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add_food")
-    public void addFood(FoodDto foodDTO) {
-        log.info("Food added: {}", foodInfoService.save(foodDTO, utils.getPrincipal()));
+    public MessageDto addFood(@Valid FoodDto foodDTO) throws FoodExistsException {
+        log.info("Food adding: {}",foodDTO.toString());
+        return foodInfoService.save(foodDTO, utils.getPrincipal());
     }
 
     /**
@@ -144,7 +150,7 @@ public class UserController {
      */
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("change_password")
-    public void changePassword(PasswordChangeDto passwordChangeDTO) throws PasswordIncorrectException {
+    public void changePassword(@Valid PasswordChangeDto passwordChangeDTO) throws PasswordIncorrectException {
         userService.updatePassword(passwordChangeDTO, utils.getPrincipal());
         log.info("Password changed");
     }
@@ -154,9 +160,9 @@ public class UserController {
      *
      * @see PageController#accountChange()
      */
-    @ResponseStatus(HttpStatus.OK)
+   // @ResponseStatus(HttpStatus.OK)
     @PostMapping("change_account")
-    public void changeAccount(UserDto userDto) {
+    public void changeAccount(@Valid UserDto userDto) {
         User user = userService.updateAccount(utils.getPrincipal(), userDto);
         utils.updatePrincipal(user);
         log.info("Updated account: " + user.toString());

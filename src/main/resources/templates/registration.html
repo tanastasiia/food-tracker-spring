@@ -65,7 +65,9 @@
 
                 <div class="form-group">
                     <label for="dateOfBirth" class="control-label" th:text="#{messages.enter.date.of.birth}"></label>
-                    <input id="dateOfBirth" class="form-control" type=date ng-model="user.dateOfBirth" required/>
+                    <input id="dateOfBirth" class="form-control" type=date
+                           pattern="dd/MM/YYYY"
+                           ng-model="user.dateOfBirth" required/>
                 </div>
 
 

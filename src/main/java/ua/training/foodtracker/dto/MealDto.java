@@ -15,6 +15,6 @@ public class MealDto {
     String username;
     String foodName;
     Integer amount;
-    LocalDate date;
+    String date;
     LocalTime time;
 }

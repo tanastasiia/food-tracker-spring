@@ -20,6 +20,7 @@ angular.module("password", [])
                 function (error) {
                     $scope.showIncorrectPassword = true;
                     $scope.showPasswordChanged = false;
+
                 }
             );
         }
