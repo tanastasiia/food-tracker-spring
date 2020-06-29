@@ -2,7 +2,8 @@ package ua.training.foodtracker.dto;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import ua.training.foodtracker.config.ValidationErrorMessages;
+import ua.training.foodtracker.config.validation.NameNotNull;
+import ua.training.foodtracker.config.validation.ValidationErrorMessages;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -15,12 +16,14 @@ import java.math.BigDecimal;
 @Builder
 @ToString
 @Slf4j
+
+@NameNotNull
 public class FoodDto {
 
-    @Size(min = 2, max = 45, message = ValidationErrorMessages.NAMES)
+    @Size(max = 45, message = ValidationErrorMessages.NAMES)
     private String name;
 
-    @Size(min = 2, max = 45, message = ValidationErrorMessages.NAMES)
+    @Size(max = 45, message = ValidationErrorMessages.NAMES)
     private String nameUa;
 
     private BigDecimal carbs;
@@ -30,5 +33,7 @@ public class FoodDto {
     @Min(value = 0, message = ValidationErrorMessages.POSITIVE_NUMBER)
     @Max(value = Integer.MAX_VALUE, message = ValidationErrorMessages.INTEGER_MAX)
     private Integer calories;
+
+    private Boolean isGlobal;
 
 }

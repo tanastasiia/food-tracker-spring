@@ -82,6 +82,7 @@ public class GlobalExceptionController {
     public ResponseEntity<List<ValidationErrorResponse>> handleMethodArgumentNotValid(BindException ex) {
 
         System.out.println("BindException EXC");
+        ex.getAllErrors().forEach(System.out::println);
         return new ResponseEntity<>(
                 ex.getFieldErrors().stream()
                         .map(error ->

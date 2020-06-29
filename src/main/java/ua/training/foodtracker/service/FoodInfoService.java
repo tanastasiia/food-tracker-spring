@@ -13,12 +13,14 @@ import ua.training.foodtracker.dto.lists.FoodInfosDto;
 import ua.training.foodtracker.dto.lists.FoodNamesDto;
 import ua.training.foodtracker.entity.Food;
 import ua.training.foodtracker.entity.FoodInfo;
+import ua.training.foodtracker.entity.Role;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.exception.FoodExistsException;
 import ua.training.foodtracker.repository.FoodInfoRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,41 +48,60 @@ public class FoodInfoService {
      * Find food by food name available for the user
      */
     public Optional<FoodInfo> findFoodByFoodNameAndUser(String foodName, Long userId) {
-        return foodInfoRepository.findAllByFoodNameOrFoodNameUaAndUserIdOrGlobal(foodName, userId);
+        List<FoodInfo> foodInfos =  foodInfoRepository.findAllByFoodNameOrFoodNameUaAndUserIdOrGlobal(foodName, userId);
+        if(foodInfos.size() != 1){
+            return foodInfos.stream().filter(foodInfo -> foodInfo.getUser().getId().equals(userId)).findFirst();
+        }  else {
+            return Optional.ofNullable(foodInfos.get(0));
+        }
     }
 
     /**
      * Save new food
      *
-     * @retuen success of fail localized message
+     * @retuen success or fail localized message
      */
     @Transactional
     public MessageDto save(FoodDto foodDto, User user) throws FoodExistsException {
-
-        Optional<FoodInfo> savedFood = Optional.empty();
         if (!findFoodByFoodNameAndUser(foodDto.getName(), user.getId()).isPresent()) {
-            boolean isGlobal = false; // foodDto.getIsGlobal().orElse(false);
-            savedFood = Optional.of(foodInfoRepository
-                    .save(FoodInfo.builder()
-                            .food(Food.builder()
-                                    .name(foodDto.getName())
-                                    .nameUa(foodDto.getNameUa())
-                                    .carbs(serviceUtils.toMilligrams(foodDto.getCarbs()))
-                                    .protein(serviceUtils.toMilligrams(foodDto.getProtein()))
-                                    .fat(serviceUtils.toMilligrams(foodDto.getFat()))
-                                    .calories(foodDto.getCalories())
-                                    .build())
-                            .isGlobal(isGlobal)
-                            .user(user)
-                            .build()));
+            foodInfoRepository.save(foodInfoBuilderToSave(foodDto, user));
             return MessageDto.builder()
                     .message(localeConfiguration.getMessageResource()
-                            .getMessage( addSuccessMessageKey, null, LocaleContextHolder.getLocale()))
+                            .getMessage(addSuccessMessageKey, null, LocaleContextHolder.getLocale()))
                     .build();
 
         } else throw new FoodExistsException();
+    }
 
+    /**
+     * Build foodInfo depending on locale and admin role.
+     * For user role: available only one food name field, and it gets written in name or name_ua column depending on current user locale
+     * For admin user: available both fields and isGlobal field;
+     *
+     * @param foodDto to build food from
+     * @param user    to take role from
+     * @return foodInfo object
+     */
+    private FoodInfo foodInfoBuilderToSave(FoodDto foodDto, User user) {
+        boolean isGlobal = Optional.ofNullable(foodDto.getIsGlobal()).orElse(false);
+        Food.FoodBuilder food = Food.builder()
+                .carbs(serviceUtils.toMilligrams(foodDto.getCarbs()))
+                .protein(serviceUtils.toMilligrams(foodDto.getProtein()))
+                .fat(serviceUtils.toMilligrams(foodDto.getFat()))
+                .calories(foodDto.getCalories());
 
+        if (user.getRole().equals(Role.ROLE_USER.name())) {
+            food = serviceUtils.isLocaleUa()
+                    ? food.nameUa(foodDto.getName())
+                    : food.name(foodDto.getName());
+        } else {
+            food = food.name(foodDto.getName()).nameUa(foodDto.getNameUa());
+        }
+        return FoodInfo.builder()
+                .food(food.build())
+                .isGlobal(isGlobal)
+                .user(user)
+                .build();
     }
 
     /**

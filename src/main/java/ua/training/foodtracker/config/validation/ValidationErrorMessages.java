@@ -1,4 +1,4 @@
-package ua.training.foodtracker.config;
+package ua.training.foodtracker.config.validation;
 
 import java.math.BigDecimal;
 
@@ -12,5 +12,6 @@ public class ValidationErrorMessages {
     public static final String NAMES="validation.names.size";
     public static final String POSITIVE_NUMBER="validation.number.must.be.positive";
     public static final String INTEGER_MAX="validation.integer.max";
+    public static final String FOOD_BOTH_NAMES_EMPTY = "validation.food.both.names.empty";
 
 }

@@ -23,14 +23,4 @@ public class FoodService {
         this.foodRepository = foodRepository;
     }
 
-    /**
-     * Find food by name or name in ukrainian
-     *
-     * @param name name to search by
-     */
-    public Optional<Food> findByName(String name) {
-        return foodRepository.findByNameOrNameUa(name);
-    }
-
-
 }

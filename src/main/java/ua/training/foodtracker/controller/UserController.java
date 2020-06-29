@@ -13,6 +13,7 @@ import ua.training.foodtracker.dto.*;
 import ua.training.foodtracker.dto.lists.FoodNamesDto;
 import ua.training.foodtracker.dto.lists.UsersMealStatDto;
 import ua.training.foodtracker.entity.Food;
+import ua.training.foodtracker.entity.FoodInfo;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.exception.FoodExistsException;
 import ua.training.foodtracker.exception.FoodNotExistsException;
@@ -123,9 +124,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping("add_meal")
     public AddMealResponse addUserFood(@Valid UserMealDto userMealDto) throws FoodNotExistsException {
-        Food food = foodService.findByName(userMealDto.getFoodName()).orElseThrow(FoodNotExistsException::new);
+        FoodInfo foodInfo = foodInfoService.findFoodByFoodNameAndUser(userMealDto.getFoodName(), utils.getPrincipalId())
+                .orElseThrow(FoodNotExistsException::new);
         log.info("Meal adding: {}", userMealDto.toString());
-        return  mealService.save(food, userMealDto.getAmount(), utils.getPrincipal());
+        return  mealService.save(foodInfo.getFood(), userMealDto.getAmount(), utils.getPrincipal());
     }
 
     /**

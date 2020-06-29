@@ -91,7 +91,7 @@
             <div class="form-group autocomplete">
                 <label th:text="#{messages.enter.food.name}" for="meal-foodName"></label>
                 <input class="form-control form-control-lg" id="meal-foodName" type="text" placeholder=""
-                                                                                                required>
+                       required>
             </div>
 
             <div class="form-group">
@@ -123,10 +123,10 @@
                            placeholder="" ng-model="food.name">
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" th:if="${isAdmin}">
                     <label th:text="#{messages.enter.food.name.ua}" for="food-nameUa"></label>
                     <input class="form-control form-control-lg" id="food-nameUa" type="text" placeholder=""
-                           ng-model="food.nameUa" required>
+                           ng-model="food.nameUa">
                 </div>
 
                 <div class="form-group">
@@ -151,6 +151,12 @@
                     <label for="food-calories" th:text="#{messages.enter.food.calories}"></label>
                     <input class="form-control form-control-lg" id="food-calories" type="number" placeholder=""
                            ng-model="food.calories">
+                </div>
+
+                <div class="form-group" th:if="${isAdmin}">
+                    <label for="food-isglobal" th:text="#{messages.enter.food.calories}"></label>
+                    <input type="checkbox" class="form-check-input" id="food-isglobal"
+                           ng-model="food.isGlobal">
                 </div>
 
                 <button th:text="#{messages.button.submit}" type="submit" class="btn btn-primary"
