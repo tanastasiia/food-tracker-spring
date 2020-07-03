@@ -23,5 +23,4 @@ public class Utils {
         return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
 
-
 }

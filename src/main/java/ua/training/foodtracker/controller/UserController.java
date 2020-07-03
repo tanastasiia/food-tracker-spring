@@ -1,6 +1,7 @@
 package ua.training.foodtracker.controller;
 
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Pageable;
@@ -32,23 +33,14 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/user/")
 public class UserController {
 
     private UserService userService;
     private MealService mealService;
-    private FoodService foodService;
     private FoodInfoService foodInfoService;
     private Utils utils;
-
-    public UserController(MealService mealService, FoodService foodService, FoodInfoService foodInfoService,
-                          UserService userService, Utils utils) {
-        this.mealService = mealService;
-        this.foodService = foodService;
-        this.foodInfoService = foodInfoService;
-        this.userService = userService;
-        this.utils = utils;
-    }
 
     /**
      * User info for account page

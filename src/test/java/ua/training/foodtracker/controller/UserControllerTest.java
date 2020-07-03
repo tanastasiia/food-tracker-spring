@@ -66,21 +66,21 @@ public class UserControllerTest {
 
     SecurityConfiguration securityConfiguration = new SecurityConfiguration();
     LocaleConfiguration localeConfiguration = new LocaleConfiguration();
-    ServiceUtils serviceUtils = new ServiceUtils();
+    ServiceUtils serviceUtils = new ServiceUtils(localeConfiguration);
     UserService userService;
 
 
     MealService mealService;
     FoodInfoService foodInfoService;
 
-    @BeforeEach
+    /*@BeforeEach
     public void init() {
         utils.updatePrincipal(userTestData.USER);
         userService = new UserService(userRepository, securityConfiguration, localeConfiguration, serviceUtils);
         mealService = new MealService(mealRepository, serviceUtils, localeConfiguration);
         foodInfoService = new FoodInfoService(foodInfoRepository, serviceUtils, localeConfiguration);
 
-    }
+    }*/
 
     @Test
     public void getUaUserDtoTest() throws Exception {

@@ -1,6 +1,5 @@
 angular.module("registration_form",[])
     .controller("RegistrationCtrl", ["$scope", "$http", function ($scope, $http) {
-        console.log("regCtrl");
         $scope.user = {};
         $scope.showSuccess = false;
         $scope.showError = false;

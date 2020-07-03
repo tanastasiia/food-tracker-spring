@@ -1,6 +1,7 @@
 package ua.training.foodtracker.controller;
 
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,14 +14,11 @@ import ua.training.foodtracker.service.UserService;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/registration/")
 public class RegController {
 
     private UserService userService;
-
-    public RegController(UserService userService) {
-        this.userService = userService;
-    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("register")

@@ -1,5 +1,6 @@
 package ua.training.foodtracker.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -29,14 +30,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
+@AllArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionController {
 
     private LocaleConfiguration localeConfiguration;
-
-    public GlobalExceptionController(LocaleConfiguration localeConfiguration) {
-        this.localeConfiguration = localeConfiguration;
-    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({UserExistsException.class})
@@ -80,8 +78,6 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<List<ValidationErrorResponse>> handleMethodArgumentNotValid(BindException ex) {
-
-        System.out.println("BindException EXC");
         ex.getAllErrors().forEach(System.out::println);
         return new ResponseEntity<>(
                 ex.getFieldErrors().stream()

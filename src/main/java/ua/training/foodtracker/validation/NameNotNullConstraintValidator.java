@@ -1,4 +1,4 @@
-package ua.training.foodtracker.config.validation;
+package ua.training.foodtracker.validation;
 
 import ua.training.foodtracker.dto.FoodDto;
 

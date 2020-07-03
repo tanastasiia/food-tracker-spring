@@ -42,10 +42,10 @@ public class UserServiceTest {
     LocaleConfiguration localeConfiguration = new LocaleConfiguration();
     UserService userService;
 
-    @BeforeEach
+   /* @BeforeEach
     public void init() {
         userService = new UserService(userRepository, securityConfiguration, localeConfiguration, serviceUtils);
-    }
+    }*/
 
     @Test
     public void findByUsernameTest() {

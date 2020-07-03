@@ -2,7 +2,7 @@ package ua.training.foodtracker.dto;
 
 
 import lombok.*;
-import ua.training.foodtracker.config.validation.ValidationErrorMessages;
+import ua.training.foodtracker.validation.ValidationErrorMessages;
 import ua.training.foodtracker.entity.User;
 
 import javax.validation.constraints.Max;

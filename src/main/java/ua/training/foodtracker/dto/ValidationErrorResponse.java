@@ -2,8 +2,6 @@ package ua.training.foodtracker.dto;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor

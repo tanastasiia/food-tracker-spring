@@ -2,8 +2,8 @@ package ua.training.foodtracker.dto;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import ua.training.foodtracker.config.validation.NameNotNull;
-import ua.training.foodtracker.config.validation.ValidationErrorMessages;
+import ua.training.foodtracker.validation.NameNotNull;
+import ua.training.foodtracker.validation.ValidationErrorMessages;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;

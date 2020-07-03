@@ -17,6 +17,7 @@ import ua.training.foodtracker.entity.Role;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.exception.FoodExistsException;
 import ua.training.foodtracker.repository.FoodInfoRepository;
+import ua.training.foodtracker.validation.Messages;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -33,14 +34,10 @@ public class FoodInfoService {
 
     private FoodInfoRepository foodInfoRepository;
     private ServiceUtils serviceUtils;
-    private LocaleConfiguration localeConfiguration;
 
-    private String addSuccessMessageKey = "messages.alert.food.added";
-
-    public FoodInfoService(FoodInfoRepository foodInfoRepository, ServiceUtils serviceUtils, LocaleConfiguration localeConfiguration) {
+    public FoodInfoService(FoodInfoRepository foodInfoRepository, ServiceUtils serviceUtils) {
         this.foodInfoRepository = foodInfoRepository;
         this.serviceUtils = serviceUtils;
-        this.localeConfiguration = localeConfiguration;
     }
 
 
@@ -66,8 +63,7 @@ public class FoodInfoService {
         if (!findFoodByFoodNameAndUser(foodDto.getName(), user.getId()).isPresent()) {
             foodInfoRepository.save(foodInfoBuilderToSave(foodDto, user));
             return MessageDto.builder()
-                    .message(localeConfiguration.getMessageResource()
-                            .getMessage(addSuccessMessageKey, null, LocaleContextHolder.getLocale()))
+                    .message(serviceUtils.getLocalizedMessage(serviceUtils.ADD_FOOD_SUCCESS))
                     .build();
 
         } else throw new FoodExistsException();

@@ -1,6 +1,7 @@
 package ua.training.foodtracker.service;
 
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.training.foodtracker.config.Utils;
@@ -15,12 +16,8 @@ import java.util.Optional;
  * Service for {@link Food} entity
  */
 @Service
+@AllArgsConstructor
 public class FoodService {
-
     private FoodRepository foodRepository;
-
-    public FoodService(FoodRepository foodRepository) {
-        this.foodRepository = foodRepository;
-    }
 
 }

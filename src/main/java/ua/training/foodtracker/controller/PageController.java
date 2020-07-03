@@ -17,7 +17,6 @@ import ua.training.foodtracker.entity.User;
 @Controller
 public class PageController {
 
-
     @ModelAttribute("isAdmin")
     public boolean isAdmin() {
         return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())

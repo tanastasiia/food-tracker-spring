@@ -1,6 +1,4 @@
-package ua.training.foodtracker.config.validation;
-
-import java.math.BigDecimal;
+package ua.training.foodtracker.validation;
 
 public class ValidationErrorMessages {
     public static final  String USER_USERNAME = "validation.user.username";

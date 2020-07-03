@@ -11,6 +11,7 @@ import ua.training.foodtracker.dto.lists.MealsDto;
 import ua.training.foodtracker.dto.lists.UsersMealStatDto;
 import ua.training.foodtracker.entity.*;
 import ua.training.foodtracker.repository.MealRepository;
+import ua.training.foodtracker.validation.Messages;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,12 +34,10 @@ public class MealService {
 
     private MealRepository mealRepository;
     private ServiceUtils serviceUtils;
-    private LocaleConfiguration localeConfiguration;
 
-    public MealService(MealRepository mealRepository, ServiceUtils serviceUtils, LocaleConfiguration localeConfiguration) {
+    public MealService(MealRepository mealRepository, ServiceUtils serviceUtils) {
         this.mealRepository = mealRepository;
         this.serviceUtils = serviceUtils;
-        this.localeConfiguration = localeConfiguration;
     }
 
 
@@ -60,8 +59,7 @@ public class MealService {
                 .build());
         return AddMealResponse.builder()
                 .calories(todaysCalories(user.getId()))
-                .message(localeConfiguration.getMessageResource()
-                        .getMessage("messages.alert.meal.added", null, LocaleContextHolder.getLocale())).build();
+                .message(serviceUtils.getLocalizedMessage(serviceUtils.ADD_MEAL_SUCCESS)).build();
     }
 
     /**

@@ -40,17 +40,15 @@ public class UserService  implements UserDetailsService {
 
     private UserRepository userRepository;
     private SecurityConfiguration securityConfiguration;
-    private LocaleConfiguration localeConfiguration;
     private ServiceUtils serviceUtils;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     public UserService(UserRepository userRepository, SecurityConfiguration securityConfiguration,
-                       LocaleConfiguration localeConfiguration, ServiceUtils serviceUtils) {
+                       ServiceUtils serviceUtils) {
         this.userRepository = userRepository;
         this.securityConfiguration = securityConfiguration;
-        this.localeConfiguration = localeConfiguration;
         this.serviceUtils = serviceUtils;
     }
 
@@ -74,15 +72,12 @@ public class UserService  implements UserDetailsService {
                 .username(user.getUsername())
                 .height(user.getHeight())
                 .weight(user.getWeight())
-                .activityLevel(localeConfiguration.getMessageResource()
-                        .getMessage(user.getActivityLevel(), null, LocaleContextHolder.getLocale()))
+                .activityLevel(serviceUtils.getLocalizedMessage(user.getActivityLevel()))
                 .dateOfBirth(serviceUtils.getLocalizedDate(user.getDateOfBirth()))
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .role(localeConfiguration.getMessageResource()
-                        .getMessage(user.getRole(), null, LocaleContextHolder.getLocale()))
-                .gender(localeConfiguration.getMessageResource()
-                        .getMessage(user.getGender(), null, LocaleContextHolder.getLocale())).build();
+                .role(serviceUtils.getLocalizedMessage(user.getRole()))
+                .gender(serviceUtils.getLocalizedMessage(user.getGender())).build();
 
     }
 
@@ -91,8 +86,6 @@ public class UserService  implements UserDetailsService {
      */
     public UserRegDto getUserRegDto(User user) {
         return new UserRegDto(user);
-
-
     }
 
     /**
@@ -104,7 +97,6 @@ public class UserService  implements UserDetailsService {
      */
     public User register(UserRegDto userRegDto) throws UserExistsException {
         if (findByUsername(userRegDto.getUsername()).isPresent()) {
-            log.info("UserExistsException throwing");
             throw new UserExistsException();
         }
 

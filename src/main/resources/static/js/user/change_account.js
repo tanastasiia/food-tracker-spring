@@ -4,8 +4,6 @@ angular.module("accountChange", [])
         $scope.newUser = {};
         $scope.user = {};
 
-        $scope.showError = false;
-
         $scope.getUser = function () {
             $http({
                 method: "GET",
@@ -41,7 +39,6 @@ angular.module("accountChange", [])
                     error.data.forEach(msg => {
                         createAlertDiv(msg.message, msg.field, "danger");
                     });
-                   // $scope.showError = true;
                 }
             );
         }

@@ -3,6 +3,7 @@ package ua.training.foodtracker.service;
 import lombok.experimental.UtilityClass;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import ua.training.foodtracker.config.LocaleConfiguration;
 import ua.training.foodtracker.config.Utils;
 import ua.training.foodtracker.entity.ActivityLevel;
 import ua.training.foodtracker.entity.Food;
@@ -25,12 +26,22 @@ public class ServiceUtils {
     public static final Integer GRAMS_TO_MILLIGRAMS = 1000;
     public static final BigDecimal MILLIGRAMS_TO_GRAMS = BigDecimal.valueOf(1000d);
 
-    public static DateTimeFormatter dayMonthDateFormat = DateTimeFormatter.ofPattern("dd/MM");
-    public static DateTimeFormatter dateFormatUa = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    public static DateTimeFormatter dateFormatEng = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    public static final String ADD_FOOD_SUCCESS = "messages.alert.food.added";
+    public static final String ADD_MEAL_SUCCESS = "messages.alert.meal.added";
+
+    public static DateTimeFormatter dayMonthDateFormat = DateTimeFormatter.ofPattern("dd.MM");
+    public static DateTimeFormatter dateFormatUa = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    public static DateTimeFormatter dateFormatEng = DateTimeFormatter.ofPattern("MM.dd.yyyy");
+
+    private LocaleConfiguration localeConfiguration;
+
+    public ServiceUtils(LocaleConfiguration localeConfiguration) {
+        this.localeConfiguration = localeConfiguration;
+    }
 
     /**
      * Converts grams to milligrams
+     *
      * @param grams grams to convert
      * @return milligrams
      */
@@ -40,6 +51,7 @@ public class ServiceUtils {
 
     /**
      * Converts milligrams to grams
+     *
      * @param milligrams milligrams to convert
      * @return grams
      */
@@ -50,8 +62,9 @@ public class ServiceUtils {
 
     /**
      * Returns localized food name
+     *
      * @param food Food which name is returned
-     * @return name in needed locale (ukrainian or english)if  name in that locale exists in database and in another language if not.
+     * @return name in needed locale (ukrainian or english) if  name in that locale exists in database and in another language if not.
      * Returns empty string if both names are absent.
      */
     public String getLocalizedFoodName(Food food) {
@@ -64,6 +77,7 @@ public class ServiceUtils {
 
     /**
      * Returns localized date
+     *
      * @param date date to localize
      * @return localized date
      */
@@ -75,13 +89,14 @@ public class ServiceUtils {
 
     /**
      * Parse localized date
+     *
      * @param date date to localize
      * @return localized date
      */
     public LocalDate parseLocalizedDate(String date) {
         return isLocaleUa()
                 ? LocalDate.parse(date, dateFormatUa)
-                :  LocalDate.parse(date, dateFormatEng);
+                : LocalDate.parse(date, dateFormatEng);
     }
 
     /**
@@ -97,5 +112,10 @@ public class ServiceUtils {
 
     public boolean isLocaleUa() {
         return LocaleContextHolder.getLocale().equals(LOCALE_UA);
+    }
+
+    public String getLocalizedMessage(String key) {
+        return localeConfiguration.getMessageResource()
+                .getMessage(key, null, LocaleContextHolder.getLocale());
     }
 }
