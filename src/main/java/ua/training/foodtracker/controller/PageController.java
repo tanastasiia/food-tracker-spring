@@ -60,5 +60,11 @@ public class PageController {
         return "user/index";
     }
 
+    @GetMapping("/food/change")
+    public String foodChange() {
+        log.info("food change page");
+        return "admin/food_change";
+    }
+
 
 }

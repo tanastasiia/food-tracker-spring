@@ -1,7 +1,6 @@
 angular.module("accountChange", [])
     .controller("AccountChangeCtrl", ["$scope", "$http", function ($scope, $http) {
 
-        $scope.newUser = {};
         $scope.user = {};
 
         $scope.getUser = function () {

@@ -5,12 +5,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import ua.training.foodtracker.dto.FoodDto;
 import ua.training.foodtracker.dto.lists.FoodInfosDto;
 import ua.training.foodtracker.dto.lists.MealsDto;
 import ua.training.foodtracker.dto.lists.UsersDto;
+import ua.training.foodtracker.entity.FoodInfo;
+import ua.training.foodtracker.exception.FoodNotExistsException;
 import ua.training.foodtracker.service.FoodInfoService;
 import ua.training.foodtracker.service.MealService;
 import ua.training.foodtracker.service.UserService;
+
+import javax.validation.Valid;
 
 /**
  * Rest controller for admins
@@ -61,18 +66,39 @@ public class AdminController {
         log.info("all_meals page: {}", pageable);
         return mealService.findAllMeals(pageable);
     }
+    /**
+     *Get food info by food id
+     *
+     * @see PageController#foodChange()
+     */
+    @GetMapping("food/{foodId}")
+    public FoodInfo getFood(@PathVariable("foodId") Long foodId) throws FoodNotExistsException {
+        log.info("get food page: {}", foodId);
+        return foodInfoService.getFoodById(foodId);
+    }
+
+    /**
+     * Update food info
+     *
+     * @see PageController#foodChange()
+     */
+    @PostMapping("food/{foodId}/change")
+    public FoodInfo changeFood(@PathVariable("foodId") Long foodId, @RequestBody FoodInfo foodInfo) {
+        log.info("changing food: {}", foodId);
+        return foodInfoService.changeFood(foodInfo);
+    }
+
 
     /**
      * Change user role
      *
      * @param userId user which role is being changed
-     * @param role   old user role
      * @see PageController#admin()
      */
-    @PostMapping("change_role")
-    public void changeRole(@RequestParam("userId") Long userId, @RequestParam("role") String role) {
-        log.info("changing role " + role + "id: " + userId);
-        userService.changeRole(userId, role);
+    @PostMapping("user/{userId}/change/role")
+    public void changeRole(@PathVariable("userId") Long userId) {
+        log.info("changing role for user: " + userId);
+        userService.changeRole(userId);
     }
 
 

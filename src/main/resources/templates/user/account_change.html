@@ -41,13 +41,13 @@
             <form method="post" ng-submit="changeAccount(user)">
 
                 <div class="form-group">
-                    <label for="firstName" class="control-label" th:text="#{messages.enter.food.name}"></label>
+                    <label for="firstName" class="control-label" th:text="#{messages.enter.first.name}"></label>
                     <input id="firstName" class="form-control" type=text  value="{{user.firstName}}" ng-model="user.firstName" required/>
                 </div>
 
                 <div class="form-group">
-                    <label for="firstNameUa" class="control-label" th:text="#{messages.enter.last.name}"></label>
-                    <input id="firstNameUa" class="form-control" type=text value="{{user.lastName}}" ng-model="user.lastName" required/>
+                    <label for="lastName" class="control-label" th:text="#{messages.enter.last.name}"></label>
+                    <input id="lastName" class="form-control" type=text value="{{user.lastName}}" ng-model="user.lastName" required/>
                 </div>
 
                 <div class="form-group">

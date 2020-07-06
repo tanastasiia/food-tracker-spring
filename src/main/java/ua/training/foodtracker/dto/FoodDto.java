@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 @NameNotNull
 public class FoodDto {
 
+    private Long id;
     @Size(max = 45, message = ValidationErrorMessages.NAMES)
     private String name;
 

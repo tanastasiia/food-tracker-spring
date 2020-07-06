@@ -24,6 +24,7 @@ import ua.training.foodtracker.dto.ValidationErrorResponse;
 import ua.training.foodtracker.exception.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,6 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<List<ValidationErrorResponse>> handleMethodArgumentNotValid(BindException ex) {
-        ex.getAllErrors().forEach(System.out::println);
         return new ResponseEntity<>(
                 ex.getFieldErrors().stream()
                         .map(error ->
@@ -91,6 +91,4 @@ public class GlobalExceptionController {
                 HttpStatus.NOT_ACCEPTABLE
         );
     }
-
-
 }

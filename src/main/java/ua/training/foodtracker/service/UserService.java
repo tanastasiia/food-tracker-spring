@@ -69,6 +69,7 @@ public class UserService  implements UserDetailsService {
     public UserDto getLocalizedUserDto(User user) {
 
         return UserDto.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .height(user.getHeight())
                 .weight(user.getWeight())
@@ -146,11 +147,11 @@ public class UserService  implements UserDetailsService {
      * Change role of user to opposite
      *
      * @param userId of user whose role is being changed
-     * @param role   current user role
      */
     @Transactional
-    public void changeRole(Long userId, String role) {
-        userRepository.updateRole(role.equals(Role.ROLE_ADMIN.name()) ? Role.ROLE_USER.name() : Role.ROLE_ADMIN.name(), userId);
+    public void changeRole(Long userId) {
+        User user = entityManager.find(User.class, userId);
+        userRepository.updateRole(user.getRole().equals(Role.ROLE_ADMIN.name()) ? Role.ROLE_USER.name() : Role.ROLE_ADMIN.name(), userId);
     }
 
     /**

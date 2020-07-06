@@ -2,8 +2,10 @@ package ua.training.foodtracker.entity;
 
 
 import lombok.*;
+import ua.training.foodtracker.validation.ValidationErrorMessages;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 
 @Getter

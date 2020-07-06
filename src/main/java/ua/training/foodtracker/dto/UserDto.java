@@ -18,6 +18,7 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode
 public class UserDto {
 
+    private Long id;
     @Pattern(regexp = "^[0-9A-Za-z]{4,25}$", message = ValidationErrorMessages.USER_USERNAME)
     private String username;
 

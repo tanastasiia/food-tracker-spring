@@ -57,11 +57,10 @@ angular.module("admin", [])
                 }
             );
         }
-        $scope.changeRole = function (userId, role) {
+        $scope.changeRole = function (userId) {
             $http({
                 method: "POST",
-                url: "/api/admin/change_role",
-                data: $.param({"userId": userId, "role": role}),
+                url: "/api/admin/user/" + userId + "/change/role",
                 headers: {"Content-Type": "application/x-www-form-urlencoded"}
             }).then(
                 location.reload()

@@ -16,6 +16,7 @@ import ua.training.foodtracker.entity.FoodInfo;
 import ua.training.foodtracker.entity.Role;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.exception.FoodExistsException;
+import ua.training.foodtracker.exception.FoodNotExistsException;
 import ua.training.foodtracker.repository.FoodInfoRepository;
 import ua.training.foodtracker.validation.Messages;
 
@@ -34,6 +35,9 @@ public class FoodInfoService {
 
     private FoodInfoRepository foodInfoRepository;
     private ServiceUtils serviceUtils;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public FoodInfoService(FoodInfoRepository foodInfoRepository, ServiceUtils serviceUtils) {
         this.foodInfoRepository = foodInfoRepository;
@@ -113,6 +117,7 @@ public class FoodInfoService {
                                 .isGlobal(foodInfo.getIsGlobal())
                                 .username(foodInfo.getUser() == null ? null : foodInfo.getUser().getUsername())
                                 .foodDto(FoodDto.builder()
+                                        .id(foodInfo.getFood().getId())
                                         .name(foodInfo.getFood().getName())
                                         .nameUa(foodInfo.getFood().getNameUa())
                                         .carbs(serviceUtils.toGrams(foodInfo.getFood().getCarbs()))
@@ -137,6 +142,19 @@ public class FoodInfoService {
                         .collect(Collectors.toList()))
                 .build();
     }
+
+    /**
+     * Returns foodInfo on food with such id
+     */
+    public FoodInfo getFoodById(Long foodId) throws FoodNotExistsException {
+        return foodInfoRepository.findByFood_Id(foodId).orElseThrow(FoodNotExistsException::new);
+    }
+
+    @Transactional
+    public FoodInfo changeFood(FoodInfo foodInfo) {
+        return entityManager.merge(foodInfo);
+    }
+
 
 
 }
