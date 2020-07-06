@@ -76,7 +76,7 @@
                         <p>{{user.role}}</p>
                         <button type="submit" class="btn btn-success"
                                 ng-click="changeRole(user.id)"
-                                th:text="#{messages.button.change.role}"></button>
+                                th:text="#{messages.button.change}"></button>
                     </div>
                 </td>
             </tr>
@@ -112,10 +112,8 @@
 
                 <td>
                     <a ng-href="/food/change?foodId={{foodInfo.foodDto.id}}">
-                        <button class="btn btn-primary" style="margin-top:30px"
-                                type="button"
-                                th:text="#{messages.button.change.account}">
-                        </button>
+                        <button type="submit" class="btn btn-success"
+                                th:text="#{messages.button.change}"></button>
                     </a>
 
                 </td>

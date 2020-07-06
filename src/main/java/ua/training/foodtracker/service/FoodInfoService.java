@@ -150,6 +150,9 @@ public class FoodInfoService {
         return foodInfoRepository.findByFood_Id(foodId).orElseThrow(FoodNotExistsException::new);
     }
 
+    /**
+     * Updating foodInfo
+     */
     @Transactional
     public FoodInfo changeFood(FoodInfo foodInfo) {
         return entityManager.merge(foodInfo);

@@ -97,12 +97,12 @@
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" ng-init="getTodaysFood()">
                 <a class="nav-link" id="home-tab" data-toggle="tab" href="#tabs-1" role="tab" aria-controls="home"
-                   aria-selected="true">Today</a>
+                   aria-selected="true" th:text="#{messages.today}"></a>
             </li>
 
             <li class="nav-item" ng-init="getAllFood()">
                 <a class="nav-link" id="contact-tab" data-toggle="tab" href="#tabs-2" role="tab" aria-controls="contact"
-                   aria-selected="false">All time</a>
+                   aria-selected="false" th:text="#{messages.all.time}"></a>
             </li>
         </ul>
 
