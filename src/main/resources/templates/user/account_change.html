@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Account change</title>
+    <title th:text="#{messages.account.change}"></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
@@ -33,7 +33,6 @@
         <div class="col-md-6 col-md-offset-3" ng-model="user">
 
             <h1 th:text="#{messages.title.change.account}"></h1>
-
 
             <div ng-show="showError">
                 <div class="alert alert-danger" th:text="#{messages.error.username.exists}"></div>
@@ -99,7 +98,6 @@
                     <label class="form-check-label" for="FIFTH" th:text="#{messages.enter.activity5}"></label>
                 </div>
 
-
                 <label class="control-label" th:text="#{messages.enter.gender}"></label>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="MALE"
@@ -111,7 +109,6 @@
                            ng-model="user.gender" value="FEMALE"  ng-checked="user.gender=='FEMALE'">
                     <label class="form-check-label" for="FEMALE" th:text="#{messages.enter.female}"></label>
                 </div>
-
 
                 <button type="submit" class="btn btn-success" th:text="#{messages.button.submit}"></button>
             </form>
