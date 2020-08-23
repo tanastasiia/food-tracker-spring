@@ -1,5 +1,6 @@
-## Система Похудения/Трекинга Пищи. <br>
-Клиент выбирает еду (название, кол. белки, жиры, углеволы), которую съел (из уже готового списка) и пишет Количество.<br>
-Клиент может добавить свой тип Еды (название, калории, кол. белки, жиры, углеволы). <br>
-Если Клиент привысил дневную норму, система сообщит ему об этом и напишет, на сколько была превышена Норма. <br>
-Норму брать из параметров Клиент (возраст, рост, вес, образ жизни и т.д.).
+## Food tracking system
+<li>Client can choose food which they ate (from the list) and write amount</li>
+<li>Client can add custom food (name, proteins, fat, carbs)</li>
+<li>System counts daily calories norm based on client's parameters (height, weight, ect)
+and keeps statistics of client's meals</li>
+<li>System supports English and Ukrainian languages</li>
